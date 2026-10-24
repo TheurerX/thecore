@@ -855,9 +855,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const freeBoostGuide = document.getElementById('free-boost-guide');
   const upgradeListEl = document.getElementById('upgrade-recommendations-list');
 
-  async function loadUpgradeRecommendations() {
+  let cachedUpgradeRecs = null;
+
+  async function loadUpgradeRecommendations(forceRefresh = false) {
     try {
-      const recs = await window.api.getUpgradeRecommendations();
+      if (!cachedUpgradeRecs || forceRefresh) {
+        cachedUpgradeRecs = await window.api.getUpgradeRecommendations();
+      }
+      const recs = cachedUpgradeRecs;
       if (!recs) return;
 
       const isEn = window.i18n?.getLang() === 'en';
@@ -865,8 +870,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const freeBoost = recs.find(r => r.type === 'free_boost');
       if (freeBoost && freeBoostCard) {
         freeBoostCard.style.display = 'flex';
-        if (freeBoostDesc) freeBoostDesc.textContent = freeBoost.description;
-        if (freeBoostGuide) freeBoostGuide.textContent = freeBoost.action_guide;
+        if (freeBoostDesc) freeBoostDesc.textContent = (isEn && freeBoost.description_en) ? freeBoost.description_en : freeBoost.description;
+        if (freeBoostGuide) freeBoostGuide.textContent = (isEn && freeBoost.action_guide_en) ? freeBoost.action_guide_en : freeBoost.action_guide;
       }
 
       const hardwareRecs = recs.filter(r => r.type !== 'free_boost');
@@ -883,25 +888,17 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           const costText = isEn
-            ? (r.cost_est || '').replace('руб.', 'RUB').replace('0 руб.', '0 ₽ (Free)')
+            ? (r.cost_est_en || (r.cost_est || '').replace('руб.', 'USD').replace('0 руб.', '$0'))
             : r.cost_est;
-          let priorityText = r.priority || '';
-          if (isEn) {
-            if (priorityText.includes('Высок')) priorityText = 'High';
-            else if (priorityText.includes('Средн')) priorityText = 'Medium';
-            else if (priorityText.includes('Низк')) priorityText = 'Low';
-            else if (priorityText.includes('Рекоменд')) priorityText = 'Recommended';
-            else if (priorityText.includes('Сроч')) priorityText = 'High';
-          }
-
-          let catText = r.category || '';
-          if (isEn) {
-            if (catText.includes('Процессор')) catText = 'Processor (CPU)';
-            else if (catText.includes('Видеокарта')) catText = 'Graphics Card (GPU)';
-            else if (catText.includes('Оперативная память')) catText = 'Memory (RAM)';
-            else if (catText.includes('Накопители')) catText = 'Storage (Drives)';
-            else if (catText.includes('Настройка памяти')) catText = 'Memory Tuning (BIOS)';
-          }
+          const priorityText = isEn
+            ? (r.priority_en || (r.priority === 'Высокий' ? 'High' : r.priority === 'Средний' ? 'Medium' : r.priority === 'Низкий' ? 'Low' : 'Recommended'))
+            : r.priority;
+          const catText = isEn
+            ? (r.category_en || (r.category === 'Процессор (CPU)' ? 'Processor (CPU)' : r.category === 'Видеокарта (GPU)' ? 'Graphics Card (GPU)' : r.category === 'Оперативная память (RAM)' ? 'Memory (RAM)' : r.category === 'Накопители (Диски)' ? 'Storage (Drives)' : 'Upgrade'))
+            : r.category;
+          const title = (isEn && r.title_en) ? r.title_en : r.title;
+          const benefit = (isEn && r.benefit_en) ? r.benefit_en : r.benefit;
+          const description = (isEn && r.description_en) ? r.description_en : r.description;
 
           return `
             <div class="glass-card upgrade-card ${catClass}">
@@ -909,9 +906,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="upgrade-cat-tag">${catText}</span>
                 <span class="upgrade-cost-badge">${costText} • ${priorityText}</span>
               </div>
-              <div class="upgrade-title">${r.title}</div>
-              <div class="upgrade-benefit">${r.benefit}</div>
-              <div class="upgrade-desc">${r.description}</div>
+              <div class="upgrade-title">${title}</div>
+              <div class="upgrade-benefit">${benefit}</div>
+              <div class="upgrade-desc">${description}</div>
             </div>
           `;
         }).join('');
