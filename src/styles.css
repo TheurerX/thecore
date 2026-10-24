@@ -3012,6 +3012,41 @@ dialog.dialog-closing::backdrop {
   border-radius: var(--radius-sm);
 }
 
+.lang-pill-selector {
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  border: none !important;
+}
+
+.lang-pill-btn {
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 11.5px;
+  font-weight: 500;
+  border: none !important;
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-liquid-fast);
+}
+
+.lang-pill-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lang-pill-btn.active {
+  background: rgba(59, 130, 246, 0.3);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
 .settings-rate-btn {
   height: 26px;
   padding: 0 10px;

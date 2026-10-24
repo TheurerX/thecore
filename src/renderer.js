@@ -1,6 +1,20 @@
-// TheCore v3.2.0 — Frontend Renderer Logic
+// TheCore v3.3.0 — Frontend Renderer Logic
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize i18n
+  if (window.i18n) {
+    window.i18n.applyToDOM();
+    document.addEventListener('thecore:language_changed', () => {
+      window.i18n.applyToDOM();
+      const activeTab = document.querySelector('.nav-item.active')?.dataset.view;
+      if (activeTab === 'optimize') {
+        loadOptimizationAnalysis();
+      } else if (activeTab === 'upgrade') {
+        loadUpgradeRecommendations();
+      }
+    });
+  }
+
   // Navigation & Views Cache (Zero-lag 0ms switching)
   const navButtons = document.querySelectorAll('.nav-item');
   const viewPanels = {
@@ -392,10 +406,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.shader_size_mb > 0) parts.push(`шейдеры GPU (${data.shader_size_mb} МБ)`);
       if (data.target_apps_count > 0) parts.push(`${data.target_apps_count} фоновых клиентов`);
       
+      const isEn = window.i18n?.getLang() === 'en';
       if (parts.length > 0) {
-        optHeroDesc.textContent = `Обнаружены ресурсы, готовые к безопасной очистке: ${parts.join(', ')}.`;
+        optHeroDesc.textContent = isEn
+          ? `Resources ready for safe cleanup: ${parts.join(', ')}.`
+          : `Обнаружены ресурсы, готовые к безопасной очистке: ${parts.join(', ')}.`;
       } else {
-        optHeroDesc.textContent = 'Система чиста и оптимизирована. Нажмите «Ускорить» в шапке для превентивного сброса кэша.';
+        optHeroDesc.textContent = isEn
+          ? 'System cache is clean. Click "Clean" in the header to flush unreferenced memory.'
+          : 'Система очищена. Нажмите «Очистить» в шапке для превентивного сброса кэша.';
       }
     }
 
@@ -729,7 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // TheCore Pinned Autostart Toggle Logic
   async function initTheCoreAutostart() {
-    const toggleInput = document.getElementById('thecore-autostart-toggle') || document.getElementById('theoptimizer-autostart-toggle');
+    const toggleInput = document.getElementById('thecore-autostart-toggle');
     if (!toggleInput) return;
 
     try {
@@ -1560,6 +1579,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Settings Initialization
   async function initSettingsHub() {
+    // 0. Language Selector
+    const langButtons = document.querySelectorAll('.lang-pill-btn');
+    if (window.i18n) {
+      const currentLang = window.i18n.getLang();
+      langButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+        btn.addEventListener('click', () => {
+          const newLang = btn.dataset.lang;
+          if (newLang) {
+            window.i18n.setLang(newLang);
+            langButtons.forEach(b => b.classList.toggle('active', b.dataset.lang === newLang));
+          }
+        });
+      });
+    }
+
     // 1. Autostart toggle
     if (settingsToggleAutostart) {
       try {
@@ -1571,7 +1606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const enable = e.target.checked;
         try {
           await window.api.setAutostart(enable);
-          const startupToggle = document.getElementById('thecore-autostart-toggle') || document.getElementById('theoptimizer-autostart-toggle');
+          const startupToggle = document.getElementById('thecore-autostart-toggle');
           if (startupToggle) {
             startupToggle.checked = enable;
           }
