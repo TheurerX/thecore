@@ -6,12 +6,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.i18n.applyToDOM();
     document.addEventListener('thecore:language_changed', () => {
       window.i18n.applyToDOM();
-      const activeTab = document.querySelector('.nav-item.active')?.dataset.view;
-      if (activeTab === 'optimize') {
-        loadOptimizationAnalysis();
-      } else if (activeTab === 'upgrade') {
-        loadUpgradeRecommendations();
+      if (hardwareData) {
+        renderDashboard(hardwareData);
       }
+      if (allStartupItems && allStartupItems.length > 0) {
+        renderStartupList();
+      }
+      if (allInstalledApps && allInstalledApps.length > 0) {
+        updateUninstallerCounters();
+        renderInstalledApps();
+      }
+      if (lastOptimizationAnalysis) {
+        renderOptimizationAnalysis(lastOptimizationAnalysis);
+      }
+      loadUpgradeRecommendations();
+      loadSystemRating();
     });
   }
 
@@ -126,6 +135,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderDashboard(data) {
     if (!data) return;
 
+    const isEn = window.i18n?.getLang() === 'en';
+    const uMhz = isEn ? 'MHz' : 'МГц';
+    const uGb = isEn ? 'GB' : 'ГБ';
+    const uTb = isEn ? 'TB' : 'ТБ';
+    const uMb = isEn ? 'MB' : 'МБ';
+    const uW = isEn ? 'W' : 'Вт';
+    const uHz = isEn ? 'Hz' : 'Гц';
+    const uPcs = isEn ? 'pcs.' : 'шт.';
+
     // CPU Card
     const cpu = data.cpu || {};
     const cpuNameEl = document.getElementById('cpu-name');
@@ -135,17 +153,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const cpuCoresEl = document.getElementById('cpu-cores');
     if (cpuCoresEl) cpuCoresEl.textContent = `${cpu.cores || 0} / ${cpu.threads || 0}`;
     const cpuClockEl = document.getElementById('cpu-clock');
-    if (cpuClockEl) cpuClockEl.textContent = `${cpu.max_clock_mhz || 0} МГц`;
+    if (cpuClockEl) cpuClockEl.textContent = `${cpu.max_clock_mhz || 0} ${uMhz}`;
     const cpuCacheEl = document.getElementById('cpu-cache');
     if (cpuCacheEl) {
       const l2 = Math.round((cpu.l2_cache_kb || 3072) / 1024);
       const l3 = Math.round((cpu.l3_cache_kb || 32768) / 1024);
-      cpuCacheEl.textContent = `${l2} МБ / ${l3} МБ`;
+      cpuCacheEl.textContent = `${l2} ${uMb} / ${l3} ${uMb}`;
     }
     const cpuArchEl = document.getElementById('cpu-arch');
     if (cpuArchEl) cpuArchEl.textContent = `${cpu.architecture || 'x64'} (Zen 2)`;
     const cpuTdpEl = document.getElementById('cpu-tdp');
-    if (cpuTdpEl) cpuTdpEl.textContent = `${(data.psu || {}).cpu_tdp_w || 95} Вт`;
+    if (cpuTdpEl) cpuTdpEl.textContent = `${(data.psu || {}).cpu_tdp_w || 95} ${uW}`;
 
     // GPU Card
     const gpus = data.gpu || [];
@@ -154,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (gpuNameEl) gpuNameEl.textContent = mainGpu.name || 'NVIDIA / AMD GPU';
     const gpuVramEl = document.getElementById('gpu-vram');
     const gpuVram = mainGpu.vram_gb || mainGpu.memory_total_gb || 8;
-    if (gpuVramEl) gpuVramEl.textContent = `${gpuVram} ГБ GDDR6`;
+    if (gpuVramEl) gpuVramEl.textContent = `${gpuVram} ${uGb} GDDR6`;
     const gpuBusEl = document.getElementById('gpu-bus');
     if (gpuBusEl) gpuBusEl.textContent = mainGpu.bus_interface || 'PCIe 4.0 x16';
     const gpuDriverEl = document.getElementById('gpu-driver');
@@ -162,53 +180,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const gpuDispEl = document.getElementById('gpu-disp');
     const displays = data.displays || [];
     const mainDisp = displays[0] || {};
-    if (gpuDispEl) gpuDispEl.textContent = `${mainDisp.resolution || '2560x1440'} @ ${mainDisp.refresh_rate_hz || 165} Гц`;
+    if (gpuDispEl) gpuDispEl.textContent = `${mainDisp.resolution || '2560x1440'} @ ${mainDisp.refresh_rate_hz || 165} ${uHz}`;
 
     // RAM Card
     const ram = data.ram || {};
     const ramNameEl = document.getElementById('ram-name');
     if (ramNameEl) {
       const parts = (ram.modules || []).map(m => m.part_number).filter(Boolean).join(' / ') || ram.ddr_type || 'DDR4';
-      ramNameEl.textContent = `${ram.total_gb || 0} ГБ (${parts})`;
+      ramNameEl.textContent = `${ram.total_gb || 0} ${uGb} (${parts})`;
     }
     const ramSpeedEl = document.getElementById('ram-speed');
-    if (ramSpeedEl) ramSpeedEl.textContent = `${ram.current_speed_mhz || 3200} МГц`;
+    if (ramSpeedEl) ramSpeedEl.textContent = `${ram.current_speed_mhz || 3200} ${uMhz}`;
     const ramXmpEl = document.getElementById('ram-xmp');
     if (ramXmpEl) {
       if (ram.xmp_not_enabled) {
-        ramXmpEl.textContent = 'Отключён (2400 МГц)';
+        ramXmpEl.textContent = isEn ? 'Disabled (2400 MHz)' : 'Отключён (2400 МГц)';
         ramXmpEl.style.color = '#F59E0B';
       } else {
-        ramXmpEl.textContent = 'DOCP Активен';
+        ramXmpEl.textContent = isEn ? 'DOCP Active' : 'DOCP Активен';
         ramXmpEl.style.color = '#10B981';
       }
     }
     const ramModulesEl = document.getElementById('ram-modules');
-    if (ramModulesEl) ramModulesEl.textContent = `${ram.occupied_slots || 2} из ${ram.total_slots || 4} (A2/B2)`;
+    if (ramModulesEl) ramModulesEl.textContent = `${ram.occupied_slots || 2} ${isEn ? 'of' : 'из'} ${ram.total_slots || 4} (A2/B2)`;
     const ramChannelEl = document.getElementById('ram-channel');
     if (ramChannelEl) ramChannelEl.textContent = ram.dual_channel ? 'Dual-Channel (128-bit)' : 'Single-Channel';
     const ramPartsEl = document.getElementById('ram-parts');
     if (ramPartsEl) ramPartsEl.textContent = (ram.modules || []).map(m => m.part_number).filter(Boolean)[0] || 'Kingston Fury';
     const ramAvailEl = document.getElementById('ram-avail');
-    if (ramAvailEl) ramAvailEl.textContent = `${ram.available_gb || 24.5} ГБ`;
+    if (ramAvailEl) ramAvailEl.textContent = `${ram.available_gb || 24.5} ${uGb}`;
 
     // Storage Card
     const storage = data.storage || {};
     const partitions = storage.partitions || [];
     const physDisks = storage.physical_disks || [];
     const storageNameEl = document.getElementById('storage-name');
-    if (storageNameEl) storageNameEl.textContent = `Дисковая подсистема (${physDisks.length} диска, ${partitions.length} тома)`;
+    if (storageNameEl) {
+      storageNameEl.textContent = isEn
+        ? `Storage Subsystem (${physDisks.length} drives, ${partitions.length} volumes)`
+        : `Дисковая подсистема (${physDisks.length} диска, ${partitions.length} тома)`;
+    }
 
     const storageDrivesList = document.getElementById('storage-drives-list');
     if (storageDrivesList && partitions.length > 0) {
       storageDrivesList.innerHTML = partitions.map(p => {
         const pct = Math.round(p.percent || 0);
         const diskType = p.device.toUpperCase().startsWith('C') ? 'SSD NVMe' : (p.device.toUpperCase().startsWith('E') ? 'SSD NVMe' : 'HDD SATA');
+        const driveLabel = isEn ? 'Drive' : 'Диск';
+        const freeLabel = isEn ? 'free of' : 'свободно из';
         return `
           <div class="storage-mini-drive">
             <div class="storage-mini-header">
-              <span><strong>Диск ${p.device}</strong> (${p.fstype} • ${diskType})</span>
-              <span>${p.free_gb} ГБ свободно из ${p.total_gb} ГБ (${pct}%)</span>
+              <span><strong>${driveLabel} ${p.device}</strong> (${p.fstype} • ${diskType})</span>
+              <span>${p.free_gb} ${uGb} ${freeLabel} ${p.total_gb} ${uGb} (${pct}%)</span>
             </div>
             <div class="storage-mini-bar">
               <div class="storage-mini-fill" style="width: ${pct}%;"></div>
@@ -222,25 +246,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (storageSysDisk) {
       const cPart = partitions.find(p => p.device && p.device.toUpperCase().startsWith('C')) || partitions[0] || {};
       const cap = Math.round(cPart.total_gb || 232);
-      storageSysDisk.textContent = `${cPart.device || 'C:'} (${cap} ГБ, SSD)`;
-      storageSysDisk.title = `${cPart.device || 'C:'} (${cPart.total_gb || 232} ГБ, SSD)`;
+      storageSysDisk.textContent = `${cPart.device || 'C:'} (${cap} ${uGb}, SSD)`;
+      storageSysDisk.title = `${cPart.device || 'C:'} (${cPart.total_gb || 232} ${uGb}, SSD)`;
     }
     const storageCount = document.getElementById('storage-count');
     if (storageCount) {
-      storageCount.textContent = `${physDisks.length} шт. (${partitions.length} тома)`;
-      storageCount.title = `${physDisks.length} физ. накопителя, ${partitions.length} логических тома`;
+      storageCount.textContent = isEn
+        ? `${physDisks.length} ${uPcs} (${partitions.length} vol.)`
+        : `${physDisks.length} шт. (${partitions.length} тома)`;
+      storageCount.title = isEn
+        ? `${physDisks.length} physical drives, ${partitions.length} logical volumes`
+        : `${physDisks.length} физ. накопителя, ${partitions.length} логических тома`;
     }
     const storageTotalCap = document.getElementById('storage-total-cap');
     if (storageTotalCap) {
       const totalGb = Math.round(partitions.reduce((acc, p) => acc + (p.total_gb || 0), 0));
       const totalTb = (totalGb / 1024).toFixed(2);
-      storageTotalCap.textContent = `${totalTb} ТБ (${totalGb} ГБ)`;
-      storageTotalCap.title = `Суммарный объем: ${totalTb} ТБ (${totalGb} ГБ)`;
+      storageTotalCap.textContent = `${totalTb} ${uTb} (${totalGb} ${uGb})`;
+      storageTotalCap.title = isEn ? `Total Capacity: ${totalTb} ${uTb} (${totalGb} ${uGb})` : `Суммарный объем: ${totalTb} ТБ (${totalGb} ГБ)`;
     }
     const storageBus = document.getElementById('storage-bus');
     if (storageBus) {
       storageBus.textContent = 'NVMe PCIe + SATA';
-      storageBus.title = 'Поддерживаемые интерфейсы: NVMe PCIe 4.0 + SATA 6Gb/s';
+      storageBus.title = isEn ? 'Interfaces: NVMe PCIe 4.0 + SATA 6Gb/s' : 'Поддерживаемые интерфейсы: NVMe PCIe 4.0 + SATA 6Gb/s';
     }
 
     // Motherboard Card
@@ -263,30 +291,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Displays & PSU Card
     const psu = data.psu || {};
     const displayNameEl = document.getElementById('display-name');
-    if (displayNameEl) displayNameEl.textContent = `${mainDisp.name || 'Gigabyte GS27QC'} (${mainDisp.resolution || '2560x1440'} @ ${mainDisp.refresh_rate_hz || 165} Гц)`;
+    if (displayNameEl) displayNameEl.textContent = `${mainDisp.name || 'Gigabyte GS27QC'} (${mainDisp.resolution || '2560x1440'} @ ${mainDisp.refresh_rate_hz || 165} ${uHz})`;
     const dispModel = document.getElementById('disp-model');
     if (dispModel) dispModel.textContent = mainDisp.model || mainDisp.name || 'Gigabyte GS27QC';
     const dispMode = document.getElementById('disp-mode');
-    if (dispMode) dispMode.textContent = `${mainDisp.resolution || '2560x1440'} @ ${mainDisp.refresh_rate_hz || 165} Гц`;
+    if (dispMode) dispMode.textContent = `${mainDisp.resolution || '2560x1440'} @ ${mainDisp.refresh_rate_hz || 165} ${uHz}`;
     const psuBreakdown = document.getElementById('psu-breakdown');
     if (psuBreakdown) {
-      psuBreakdown.textContent = `${psu.cpu_tdp_w || 95} Вт / ${psu.gpu_tdp_w || 220} Вт`;
-      psuBreakdown.title = `CPU: ${psu.cpu_tdp_w || 95} Вт | GPU: ${psu.gpu_tdp_w || 220} Вт`;
+      psuBreakdown.textContent = `${psu.cpu_tdp_w || 95} ${uW} / ${psu.gpu_tdp_w || 220} ${uW}`;
+      psuBreakdown.title = `CPU: ${psu.cpu_tdp_w || 95} ${uW} | GPU: ${psu.gpu_tdp_w || 220} ${uW}`;
     }
     const psuDraw = document.getElementById('psu-draw');
     if (psuDraw) {
-      psuDraw.textContent = `${psu.total_peak_w || 375} Вт`;
-      psuDraw.title = `Пиковое расчетное потребление: ${psu.total_peak_w || 375} Вт`;
+      psuDraw.textContent = `${psu.total_peak_w || 375} ${uW}`;
+      psuDraw.title = isEn ? `Peak Estimated Load: ${psu.total_peak_w || 375} ${uW}` : `Пиковое расчетное потребление: ${psu.total_peak_w || 375} Вт`;
     }
     const psuRec = document.getElementById('psu-rec');
     if (psuRec) {
-      psuRec.textContent = `${psu.recommended_psu_w || '600–650 Вт'}`;
-      psuRec.title = `Рекомендуемая мощность блока питания: ${psu.recommended_psu_w || '600–650 Вт'}`;
+      psuRec.textContent = isEn
+        ? (psu.recommended_psu_w ? psu.recommended_psu_w.replace('Вт', 'W') : '600–650 W')
+        : (psu.recommended_psu_w || '600–650 Вт');
+      psuRec.title = isEn ? 'Recommended Power Supply Unit' : `Рекомендуемая мощность блока питания: ${psu.recommended_psu_w || '600–650 Вт'}`;
     }
     const psuCert = document.getElementById('psu-cert');
     if (psuCert) {
       psuCert.textContent = psu.recommended_cert || '80 PLUS Gold';
-      psuCert.title = `Сертификат энергоэффективности: ${psu.recommended_cert || '80 PLUS Gold'}`;
+      psuCert.title = isEn ? 'Efficiency Certification: 80 PLUS Gold' : `Сертификат энергоэффективности: ${psu.recommended_cert || '80 PLUS Gold'}`;
     }
   }
 
@@ -295,6 +325,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const metrics = await window.api.getLiveMetrics();
       if (!metrics) return;
+
+      const isEn = window.i18n?.getLang() === 'en';
+      const uGb = isEn ? 'GB' : 'ГБ';
+      const uW = isEn ? 'W' : 'Вт';
 
       const cpuPct = Math.round(metrics.cpu_percent || 0);
       const ramPct = Math.round(metrics.ram_percent || 0);
@@ -305,14 +339,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cpuUsageVal) cpuUsageVal.textContent = `${cpuPct}%`;
       if (cpuUsageBar) cpuUsageBar.style.width = `${cpuPct}%`;
 
-      if (ramUsageVal) ramUsageVal.textContent = `${metrics.ram_used_gb || 0} / ${metrics.ram_total_gb || 0} ГБ (${ramPct}%)`;
+      if (ramUsageVal) ramUsageVal.textContent = `${metrics.ram_used_gb || 0} / ${metrics.ram_total_gb || 0} ${uGb} (${ramPct}%)`;
       if (ramUsageBar) ramUsageBar.style.width = `${ramPct}%`;
 
       const gpuTemp = metrics.gpu_temp_c || 0;
       if (gpuTempVal) gpuTempVal.textContent = `${gpuTemp} °C`;
       if (gpuTempBar) gpuTempBar.style.width = `${Math.min(100, Math.round((gpuTemp / 90) * 100))}%`;
 
-      if (gpuPower) gpuPower.textContent = `${metrics.gpu_power_w || 0} Вт`;
+      if (gpuPower) gpuPower.textContent = `${metrics.gpu_power_w || 0} ${uW}`;
       const gpuFanSpeed = metrics.gpu_fan_speed || '0';
       if (gpuFan) gpuFan.textContent = `${gpuFanSpeed}% ${gpuFanSpeed == 0 ? '(Fan Stop)' : ''}`;
     } catch (err) {
@@ -380,33 +414,40 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderOptimizationAnalysis(data) {
     if (!data) return;
 
+    const isEn = window.i18n?.getLang() === 'en';
+    const uMb = isEn ? 'MB' : 'МБ';
+    const uGb = isEn ? 'GB' : 'ГБ';
+    const uPcs = isEn ? 'pcs.' : 'шт.';
+
     // 1. Hero Status
     const status = data.health_status || 'moderate';
     if (optHealthBadge) {
       optHealthBadge.className = `opt-badge ${status}`;
-      optHealthBadge.textContent = data.health_text || 'Экспресс-аудит';
+      optHealthBadge.textContent = isEn
+        ? (status === 'optimal' ? 'Optimal' : (status === 'warning' ? 'Attention Needed' : 'Express Audit'))
+        : (data.health_text || 'Экспресс-аудит');
     }
     if (optHealthText) {
-      optHealthText.textContent = `Общий потенциал оптимизации`;
+      optHealthText.textContent = isEn ? 'Overall optimization potential' : 'Общий потенциал оптимизации';
     }
 
     if (optHeroTitle && !isOptimizing && !isShowingResults) {
       const totalMb = data.total_potential_mb || 0;
+      const readyPrefix = isEn ? 'Ready for cleanup: ~' : 'Готово к оптимизации: ~';
       if (totalMb >= 1024) {
-        optHeroTitle.textContent = `Готово к оптимизации: ~${data.total_potential_gb || (totalMb / 1024).toFixed(1)} ГБ`;
+        optHeroTitle.textContent = `${readyPrefix}${data.total_potential_gb || (totalMb / 1024).toFixed(1)} ${uGb}`;
       } else {
-        optHeroTitle.textContent = `Готово к оптимизации: ~${totalMb} МБ`;
+        optHeroTitle.textContent = `${readyPrefix}${totalMb} ${uMb}`;
       }
     }
 
     if (optHeroDesc && !isOptimizing && !isShowingResults) {
       const parts = [];
-      if (data.ram_cleanable_mb > 0) parts.push(`кэш RAM (~${data.ram_cleanable_mb} МБ)`);
-      if (data.temp_size_mb > 0) parts.push(`временные файлы (${data.temp_size_mb} МБ)`);
-      if (data.shader_size_mb > 0) parts.push(`шейдеры GPU (${data.shader_size_mb} МБ)`);
-      if (data.target_apps_count > 0) parts.push(`${data.target_apps_count} фоновых клиентов`);
+      if (data.ram_cleanable_mb > 0) parts.push(isEn ? `RAM cache (~${data.ram_cleanable_mb} MB)` : `кэш RAM (~${data.ram_cleanable_mb} МБ)`);
+      if (data.temp_size_mb > 0) parts.push(isEn ? `temporary files (${data.temp_size_mb} MB)` : `временные файлы (${data.temp_size_mb} МБ)`);
+      if (data.shader_size_mb > 0) parts.push(isEn ? `GPU shaders (${data.shader_size_mb} MB)` : `шейдеры GPU (${data.shader_size_mb} МБ)`);
+      if (data.target_apps_count > 0) parts.push(isEn ? `${data.target_apps_count} background clients` : `${data.target_apps_count} фоновых клиентов`);
       
-      const isEn = window.i18n?.getLang() === 'en';
       if (parts.length > 0) {
         optHeroDesc.textContent = isEn
           ? `Resources ready for safe cleanup: ${parts.join(', ')}.`
@@ -419,32 +460,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. RAM Card
-    if (optValRamCleanable) optValRamCleanable.textContent = `${data.ram_cleanable_mb || 0} МБ`;
+    if (optValRamCleanable) optValRamCleanable.textContent = `${data.ram_cleanable_mb || 0} ${uMb}`;
     if (optValRamNow) {
-      optValRamNow.textContent = `${data.ram_percent_now || 0}% (${data.ram_used_gb || 0} / ${data.ram_total_gb || 0} ГБ)`;
+      optValRamNow.textContent = `${data.ram_percent_now || 0}% (${data.ram_used_gb || 0} / ${data.ram_total_gb || 0} ${uGb})`;
     }
 
     // 3. Temp Files Card
-    if (optValTempSize) optValTempSize.textContent = `${data.temp_size_mb || 0} МБ`;
-    if (optValTempCount) optValTempCount.textContent = `${data.temp_files_count || 0} шт.`;
+    if (optValTempSize) optValTempSize.textContent = `${data.temp_size_mb || 0} ${uMb}`;
+    if (optValTempCount) optValTempCount.textContent = `${data.temp_files_count || 0} ${uPcs}`;
 
     // 4. Shader Cache Card
-    if (optValShaderSize) optValShaderSize.textContent = `${data.shader_size_mb || 0} МБ`;
-    if (optValShaderCount) optValShaderCount.textContent = `${data.shader_files_count || 0} шт.`;
+    if (optValShaderSize) optValShaderSize.textContent = `${data.shader_size_mb || 0} ${uMb}`;
+    if (optValShaderCount) optValShaderCount.textContent = `${data.shader_files_count || 0} ${uPcs}`;
 
     // 5. Target Background Apps Card
     const targetApps = data.target_apps || [];
-    if (optBadgeApps) optBadgeApps.textContent = `${targetApps.length} активно`;
-    if (optValAppsMem) optValAppsMem.textContent = `${data.target_apps_mem_mb || 0} МБ`;
-    if (optValAppsCount) optValAppsCount.textContent = `${targetApps.length} шт.`;
+    if (optBadgeApps) optBadgeApps.textContent = isEn ? `${targetApps.length} active` : `${targetApps.length} активно`;
+    if (optValAppsMem) optValAppsMem.textContent = `${data.target_apps_mem_mb || 0} ${uMb}`;
+    if (optValAppsCount) optValAppsCount.textContent = `${targetApps.length} ${uPcs}`;
 
     if (optAppsTagsList) {
       if (targetApps.length === 0) {
-        optAppsTagsList.innerHTML = `<span style="font-size: 11px; color: var(--text-muted);">Фоновые клиенты не обнаружены</span>`;
+        optAppsTagsList.innerHTML = `<span style="font-size: 11px; color: var(--text-muted);">${isEn ? 'No background clients detected' : 'Фоновые клиенты не обнаружены'}</span>`;
       } else {
         optAppsTagsList.innerHTML = targetApps.map(app => `
           <span class="opt-app-tag">
-            ${app.name} <span class="opt-app-tag-mem">${app.memory_mb} МБ</span>
+            ${app.name} <span class="opt-app-tag-mem">${app.memory_mb} ${uMb}</span>
           </span>
         `).join('');
       }
@@ -454,6 +495,9 @@ document.addEventListener('DOMContentLoaded', () => {
   async function triggerOptimizationFlow() {
     if (isOptimizing) return;
     isOptimizing = true;
+
+    const isEn = window.i18n?.getLang() === 'en';
+    const uMb = isEn ? 'MB' : 'МБ';
 
     // Clear any pending results fadeout timer
     if (optResultsTimer) {
@@ -467,10 +511,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (topBoostBtn) topBoostBtn.classList.add('running');
     if (optHeroTitle) {
       optHeroTitle.classList.add('running');
-      optHeroTitle.textContent = 'Оптимизация выполняется...';
+      optHeroTitle.textContent = isEn ? 'Optimization in progress...' : 'Оптимизация выполняется...';
     }
     if (optHeroDesc) {
-      optHeroDesc.textContent = 'Система выгружает фоновые процессы, освобождает заблокированный кэш RAM, очищает временные файлы и кэш шейдеров GPU.';
+      optHeroDesc.textContent = isEn
+        ? 'Closing background apps, flushing unreferenced RAM working set, cleaning temporary files and GPU shader caches.'
+        : 'Система выгружает фоновые процессы, освобождает заблокированный кэш RAM, очищает временные файлы и кэш шейдеров GPU.';
     }
 
     if (optProgressSection) {
@@ -500,12 +546,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (optHeroTitle) {
         optHeroTitle.classList.remove('running');
-        optHeroTitle.textContent = 'Оптимизация успешно завершена!';
+        optHeroTitle.textContent = isEn ? 'Optimization completed successfully!' : 'Оптимизация успешно завершена!';
       }
       const totalCleaned = result.total_disk_freed_mb || result.temp_freed_mb || 0;
-      const shaderDetails = result.shader_freed_mb ? ` (шейдеры: ${result.shader_freed_mb} МБ)` : '';
+      const shaderDetails = result.shader_freed_mb
+        ? (isEn ? ` (shaders: ${result.shader_freed_mb} MB)` : ` (шейдеры: ${result.shader_freed_mb} МБ)`)
+        : '';
       if (optHeroDesc) {
-        optHeroDesc.textContent = `Освобождено памяти: ${result.ram_freed_mb || 0} МБ | Удалено кэша и мусора: ${totalCleaned} МБ${shaderDetails} | Закрыто процессов: ${result.closed_processes_count || 0}.`;
+        optHeroDesc.textContent = isEn
+          ? `Memory released: ${result.ram_freed_mb || 0} MB | Purged cache & temp: ${totalCleaned} MB${shaderDetails} | Clients closed: ${result.closed_processes_count || 0}.`
+          : `Освобождено памяти: ${result.ram_freed_mb || 0} МБ | Удалено кэша и мусора: ${totalCleaned} МБ${shaderDetails} | Закрыто процессов: ${result.closed_processes_count || 0}.`;
       }
 
       // Fill summary cards
@@ -513,8 +563,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const rTemp = document.getElementById('res-temp-freed');
       const rProc = document.getElementById('res-proc-closed');
       const rCur = document.getElementById('res-current-ram');
-      if (rRam) rRam.textContent = `${result.ram_freed_mb || 0} МБ`;
-      if (rTemp) rTemp.textContent = `${totalCleaned} МБ`;
+      if (rRam) rRam.textContent = `${result.ram_freed_mb || 0} ${uMb}`;
+      if (rTemp) rTemp.textContent = `${totalCleaned} ${uMb}`;
       if (rProc) rProc.textContent = `${result.closed_processes_count || 0}`;
       if (rCur) rCur.textContent = `${result.current_ram_percent || 0}%`;
 
@@ -571,9 +621,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 10000);
 
     } catch (err) {
+      const isEn = window.i18n?.getLang() === 'en';
       if (optHeroTitle) {
         optHeroTitle.classList.remove('running');
-        optHeroTitle.textContent = 'Ошибка во время оптимизации';
+        optHeroTitle.textContent = isEn ? 'Error during optimization' : 'Ошибка во время оптимизации';
       }
       if (optHeroDesc) optHeroDesc.textContent = String(err);
     } finally {
@@ -595,9 +646,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Streaming Engine Events
   window.api.onEngineEvent((evt) => {
     if (evt.event === 'optimization_progress') {
+      const isEn = window.i18n?.getLang() === 'en';
       const { step, title, progress } = evt.data;
       if (optProgressFill) optProgressFill.style.width = `${Math.round(progress * 100)}%`;
-      if (optHeroTitle) optHeroTitle.textContent = 'Оптимизация выполняется...';
+      if (optHeroTitle) optHeroTitle.textContent = isEn ? 'Optimization in progress...' : 'Оптимизация выполняется...';
       if (optHeroDesc) optHeroDesc.textContent = title;
 
       if (step === 1) {
@@ -661,14 +713,16 @@ document.addEventListener('DOMContentLoaded', () => {
              !c.includes('the-optimizer');
     });
 
+    const isEn = window.i18n?.getLang() === 'en';
     if (startupStatsText) {
-      startupStatsText.innerHTML = `Активных процессов: <strong style="color: #10B981;">${activeItems.length}</strong>`;
+      const prefix = isEn ? 'Active processes:' : 'Активных процессов:';
+      startupStatsText.innerHTML = `${prefix} <strong style="color: #10B981;">${activeItems.length}</strong>`;
     }
 
     if (activeItems.length === 0) {
       startupListEl.innerHTML = `
         <div style="text-align: center; padding: 48px; color: var(--text-muted); font-size: 13.5px;">
-          В автозагрузке Windows нет активных сторонних приложений
+          ${isEn ? 'No active third-party startup applications' : 'В автозагрузке Windows нет активных сторонних приложений'}
         </div>
       `;
       return;
@@ -676,16 +730,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getImpactClass(impact) {
       const imp = (impact || '').toLowerCase();
-      if (imp.includes('высок')) return 'impact-high';
-      if (imp.includes('средн')) return 'impact-med';
+      if (imp.includes('высок') || imp.includes('high')) return 'impact-high';
+      if (imp.includes('средн') || imp.includes('med')) return 'impact-med';
       return 'impact-low';
     }
 
     function getRecClass(rec) {
       const r = (rec || '').toLowerCase();
-      if (r.includes('не рекоменд')) return 'rec-caution';
-      if (r.includes('безопасн') || r.includes('рекоменд')) return 'rec-safe';
+      if (r.includes('не рекоменд') || r.includes('not rec') || r.includes('caution')) return 'rec-caution';
+      if (r.includes('безопасн') || r.includes('рекоменд') || r.includes('safe') || r.includes('rec')) return 'rec-safe';
       return 'rec-neutral';
+    }
+
+    function getLocalizedImpact(impact) {
+      if (!isEn) return impact;
+      const imp = (impact || '').toLowerCase();
+      if (imp.includes('высок')) return 'High Impact';
+      if (imp.includes('средн')) return 'Medium Impact';
+      return 'Low Impact';
+    }
+
+    function getLocalizedRec(rec) {
+      if (!isEn) return rec;
+      const r = (rec || '').toLowerCase();
+      if (r.includes('не рекоменд')) return 'Not Recommended';
+      if (r.includes('безопасн')) return 'Safe to Disable';
+      if (r.includes('рекоменд')) return 'Recommended';
+      return 'Neutral';
     }
 
     startupListEl.innerHTML = activeItems.map(item => `
@@ -698,17 +769,17 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="startup-badges-row">
             <span class="startup-chip ${getImpactClass(item.impact)}">
               <span class="chip-dot"></span>
-              ${item.impact}
+              ${getLocalizedImpact(item.impact)}
             </span>
             <span class="startup-chip ${getRecClass(item.recommendation)}">
-              ${item.recommendation}
+              ${getLocalizedRec(item.recommendation)}
             </span>
           </div>
           <div class="startup-desc">${item.description}</div>
           <div class="startup-cmd" title="${item.command}">${item.command}</div>
         </div>
         <div class="startup-card-right">
-          <label class="toggle-switch" title="Отключить автозапуск">
+          <label class="toggle-switch" title="${isEn ? 'Disable startup' : 'Отключить автозапуск'}">
             <input type="checkbox" class="startup-toggle-input" data-name="${item.name}" checked>
             <span class="slider"></span>
           </label>
@@ -739,7 +810,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           } catch (err) {
             e.target.checked = true;
-            alert(`Ошибка отключения автозапуска: ${err.message}`);
+            const isEn = window.i18n?.getLang() === 'en';
+            alert(isEn ? `Failed to disable startup application: ${err.message}` : `Ошибка отключения автозапуска: ${err.message}`);
           }
         }
       });
@@ -788,6 +860,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const recs = await window.api.getUpgradeRecommendations();
       if (!recs) return;
 
+      const isEn = window.i18n?.getLang() === 'en';
+
       const freeBoost = recs.find(r => r.type === 'free_boost');
       if (freeBoost && freeBoostCard) {
         freeBoostCard.style.display = 'flex';
@@ -808,11 +882,32 @@ document.addEventListener('DOMContentLoaded', () => {
             catClass = 'cat-storage';
           }
 
+          const costText = isEn
+            ? (r.cost_est || '').replace('руб.', 'RUB').replace('0 руб.', '0 ₽ (Free)')
+            : r.cost_est;
+          let priorityText = r.priority || '';
+          if (isEn) {
+            if (priorityText.includes('Высок')) priorityText = 'High';
+            else if (priorityText.includes('Средн')) priorityText = 'Medium';
+            else if (priorityText.includes('Низк')) priorityText = 'Low';
+            else if (priorityText.includes('Рекоменд')) priorityText = 'Recommended';
+            else if (priorityText.includes('Сроч')) priorityText = 'High';
+          }
+
+          let catText = r.category || '';
+          if (isEn) {
+            if (catText.includes('Процессор')) catText = 'Processor (CPU)';
+            else if (catText.includes('Видеокарта')) catText = 'Graphics Card (GPU)';
+            else if (catText.includes('Оперативная память')) catText = 'Memory (RAM)';
+            else if (catText.includes('Накопители')) catText = 'Storage (Drives)';
+            else if (catText.includes('Настройка памяти')) catText = 'Memory Tuning (BIOS)';
+          }
+
           return `
             <div class="glass-card upgrade-card ${catClass}">
               <div class="upgrade-card-head">
-                <span class="upgrade-cat-tag">${r.category}</span>
-                <span class="upgrade-cost-badge">${r.cost_est} • ${r.priority}</span>
+                <span class="upgrade-cat-tag">${catText}</span>
+                <span class="upgrade-cost-badge">${costText} • ${priorityText}</span>
               </div>
               <div class="upgrade-title">${r.title}</div>
               <div class="upgrade-benefit">${r.benefit}</div>
@@ -832,78 +927,86 @@ document.addEventListener('DOMContentLoaded', () => {
       const detailType = e.target.dataset.detail;
       if (!detailType || !hardwareData) return;
 
+      const isEn = window.i18n?.getLang() === 'en';
+      const uMhz = isEn ? 'MHz' : 'МГц';
+      const uGb = isEn ? 'GB' : 'ГБ';
+      const uMb = isEn ? 'MB' : 'МБ';
+      const uW = isEn ? 'W' : 'Вт';
+
       if (detailType === 'cpu') {
         const c = hardwareData.cpu || {};
-        detailDialogTitle.textContent = `Процессор: ${c.name}`;
+        detailDialogTitle.textContent = isEn ? `Processor: ${c.name}` : `Процессор: ${c.name}`;
         detailDialogBody.innerHTML = `
-          <p><strong>Сокет:</strong> ${c.socket}</p>
-          <p><strong>Физических ядер:</strong> ${c.cores}</p>
-          <p><strong>Логических потоков:</strong> ${c.threads}</p>
-          <p><strong>Базовая частота:</strong> ${c.max_clock_mhz} МГц</p>
-          <p><strong>Кэш L2:</strong> ${c.l2_cache_kb} КБ</p>
-          <p><strong>Кэш L3:</strong> ${Math.round((c.l3_cache_kb || 0) / 1024)} МБ</p>
-          <p><strong>Архитектура:</strong> ${c.architecture || 'x64'} (Zen 2)</p>
+          <p><strong>${isEn ? 'Socket:' : 'Сокет:'}</strong> ${c.socket}</p>
+          <p><strong>${isEn ? 'Physical Cores:' : 'Физических ядер:'}</strong> ${c.cores}</p>
+          <p><strong>${isEn ? 'Logical Threads:' : 'Логических потоков:'}</strong> ${c.threads}</p>
+          <p><strong>${isEn ? 'Base Clock:' : 'Базовая частота:'}</strong> ${c.max_clock_mhz} ${uMhz}</p>
+          <p><strong>${isEn ? 'Cache L2:' : 'Кэш L2:'}</strong> ${c.l2_cache_kb} ${isEn ? 'KB' : 'КБ'}</p>
+          <p><strong>${isEn ? 'Cache L3:' : 'Кэш L3:'}</strong> ${Math.round((c.l3_cache_kb || 0) / 1024)} ${uMb}</p>
+          <p><strong>${isEn ? 'Architecture:' : 'Архитектура:'}</strong> ${c.architecture || 'x64'} (Zen 2)</p>
         `;
       } else if (detailType === 'gpu') {
         const g = (hardwareData.gpu || [])[0] || {};
-        detailDialogTitle.textContent = `Видеокарта: ${g.name}`;
+        detailDialogTitle.textContent = isEn ? `Graphics Card: ${g.name}` : `Видеокарта: ${g.name}`;
         detailDialogBody.innerHTML = `
-          <p><strong>Видеопамять:</strong> ${g.vram_gb || g.memory_total_gb || 8} ГБ GDDR6</p>
-          <p><strong>Версия видеодрайвера:</strong> ${g.driver || g.driver_version || 'N/A'}</p>
-          <p><strong>Шина подключения:</strong> ${g.bus_interface || 'PCIe 4.0 x16'}</p>
-          <p><strong>Поддерживаемый API:</strong> DirectX 12 Ultimate / Vulkan 1.3</p>
+          <p><strong>${isEn ? 'VRAM:' : 'Видеопамять:'}</strong> ${g.vram_gb || g.memory_total_gb || 8} ${uGb} GDDR6</p>
+          <p><strong>${isEn ? 'Driver Version:' : 'Версия видеодрайвера:'}</strong> ${g.driver || g.driver_version || 'N/A'}</p>
+          <p><strong>${isEn ? 'Bus Interface:' : 'Шина подключения:'}</strong> ${g.bus_interface || 'PCIe 4.0 x16'}</p>
+          <p><strong>${isEn ? 'Supported API:' : 'Поддерживаемый API:'}</strong> DirectX 12 Ultimate / Vulkan 1.3</p>
         `;
       } else if (detailType === 'ram') {
         const r = hardwareData.ram || {};
         const mfgList = Array.from(new Set((r.modules || []).map(m => m.manufacturer).filter(Boolean))).join(', ') || 'Kingston';
         const partList = (r.modules || []).map(m => m.part_number).filter(Boolean).join(', ') || 'KF3200C16D4/16GX';
-        detailDialogTitle.textContent = `Оперативная память: ${r.total_gb} ГБ`;
+        detailDialogTitle.textContent = isEn ? `Memory: ${r.total_gb} ${uGb}` : `Оперативная память: ${r.total_gb} ГБ`;
         detailDialogBody.innerHTML = `
-          <p><strong>Текущая частота:</strong> ${r.current_speed_mhz} МГц</p>
-          <p><strong>Паспортная частота:</strong> ${r.max_rated_speed_mhz} МГц</p>
-          <p><strong>Слотов занято:</strong> ${r.occupied_slots || 2} из ${r.total_slots || 4}</p>
-          <p><strong>Производитель модулей:</strong> ${mfgList}</p>
-          <p><strong>Маркировка планок:</strong> ${partList}</p>
-          <p><strong>Режим:</strong> ${r.dual_channel ? 'Dual-Channel (128-bit)' : 'Single-Channel'}</p>
-          <p><strong>Статус XMP:</strong> ${r.xmp_not_enabled ? 'Выключен в BIOS (работает на 2400 МГц)' : 'Активен (3200 МГц DOCP)'}</p>
+          <p><strong>${isEn ? 'Current Speed:' : 'Текущая частота:'}</strong> ${r.current_speed_mhz} ${uMhz}</p>
+          <p><strong>${isEn ? 'Rated Speed:' : 'Паспортная частота:'}</strong> ${r.max_rated_speed_mhz} ${uMhz}</p>
+          <p><strong>${isEn ? 'Occupied Slots:' : 'Слотов занято:'}</strong> ${r.occupied_slots || 2} ${isEn ? 'of' : 'из'} ${r.total_slots || 4}</p>
+          <p><strong>${isEn ? 'Module Manufacturer:' : 'Производитель модулей:'}</strong> ${mfgList}</p>
+          <p><strong>${isEn ? 'Part Number:' : 'Маркировка планок:'}</strong> ${partList}</p>
+          <p><strong>${isEn ? 'Mode:' : 'Режим:'}</strong> ${r.dual_channel ? 'Dual-Channel (128-bit)' : 'Single-Channel'}</p>
+          <p><strong>${isEn ? 'DOCP / XMP Status:' : 'Статус XMP:'}</strong> ${r.xmp_not_enabled ? (isEn ? 'Disabled in BIOS (running at 2400 MHz)' : 'Выключен в BIOS (работает на 2400 МГц)') : (isEn ? 'Active (3200 MHz DOCP)' : 'Активен (3200 МГц DOCP)')}</p>
         `;
       } else if (detailType === 'storage') {
         const s = hardwareData.storage || {};
         const partitions = s.partitions || [];
         const physDisks = s.physical_disks || [];
-        detailDialogTitle.textContent = `Накопители (${physDisks.length} диска, ${partitions.length} раздела)`;
-        let html = '<div style="margin-bottom: 8px;"><strong style="color: #60A5FA;">Физические накопители:</strong></div>';
+        detailDialogTitle.textContent = isEn
+          ? `Storage Drives (${physDisks.length} drives, ${partitions.length} volumes)`
+          : `Накопители (${physDisks.length} диска, ${partitions.length} раздела)`;
+        let html = `<div style="margin-bottom: 8px;"><strong style="color: #60A5FA;">${isEn ? 'Physical Drives:' : 'Физические накопители:'}</strong></div>`;
         html += physDisks.map(p => `
           <div style="margin-bottom: 8px; padding: 8px 10px; background: rgba(255,255,255,0.025); border-radius: 6px;">
             <p><strong>${p.name}</strong></p>
-            <p style="font-size: 11.5px; color: var(--text-muted);">${p.size_gb} ГБ • Тип: ${p.display_type || p.media_type}</p>
+            <p style="font-size: 11.5px; color: var(--text-muted);">${p.size_gb} ${uGb} • ${isEn ? 'Type:' : 'Тип:'} ${p.display_type || p.media_type}</p>
           </div>
         `).join('');
-        html += '<div style="margin: 14px 0 8px 0;"><strong style="color: #60A5FA;">Логические разделы:</strong></div>';
+        html += `<div style="margin: 14px 0 8px 0;"><strong style="color: #60A5FA;">${isEn ? 'Logical Volumes:' : 'Логические разделы:'}</strong></div>`;
         html += partitions.map(p => `
           <div style="margin-bottom: 8px; padding: 8px 10px; background: rgba(255,255,255,0.025); border-radius: 6px;">
-            <p><strong>Раздел ${p.device}</strong> (${p.fstype}): Свободно ${p.free_gb} ГБ из ${p.total_gb} ГБ (${p.percent}% заполнено)</p>
+            <p><strong>${isEn ? 'Volume' : 'Раздел'} ${p.device}</strong> (${p.fstype}): ${isEn ? 'Free' : 'Свободно'} ${p.free_gb} ${uGb} ${isEn ? 'of' : 'из'} ${p.total_gb} ${uGb} (${p.percent}% ${isEn ? 'used' : 'заполнено'})</p>
           </div>
         `).join('');
         detailDialogBody.innerHTML = html;
       } else if (detailType === 'mobo') {
         const m = hardwareData.motherboard || {};
-        detailDialogTitle.textContent = `Материнская плата: ${m.product}`;
+        detailDialogTitle.textContent = isEn ? `Motherboard: ${m.product}` : `Материнская плата: ${m.product}`;
         detailDialogBody.innerHTML = `
-          <p><strong>Производитель:</strong> ${m.manufacturer}</p>
-          <p><strong>Чипсет:</strong> AMD B550</p>
-          <p><strong>Версия BIOS:</strong> ${m.bios_version}</p>
-          <p><strong>Дата BIOS:</strong> ${m.bios_date}</p>
-          <p><strong>Серийный номер:</strong> ${m.serial_number}</p>
-          <p><strong>PCIe:</strong> Поддержка PCIe 4.0 x16 для видеокарты и M.2 NVMe</p>
+          <p><strong>${isEn ? 'Manufacturer:' : 'Производитель:'}</strong> ${m.manufacturer}</p>
+          <p><strong>${isEn ? 'Chipset:' : 'Чипсет:'}</strong> AMD B550</p>
+          <p><strong>${isEn ? 'BIOS Version:' : 'Версия BIOS:'}</strong> ${m.bios_version}</p>
+          <p><strong>${isEn ? 'BIOS Date:' : 'Дата BIOS:'}</strong> ${m.bios_date}</p>
+          <p><strong>${isEn ? 'Serial Number:' : 'Серийный номер:'}</strong> ${m.serial_number}</p>
+          <p><strong>PCIe:</strong> ${isEn ? 'PCIe 4.0 x16 support for GPU and M.2 NVMe' : 'Поддержка PCIe 4.0 x16 для видеокарты и M.2 NVMe'}</p>
         `;
       } else if (detailType === 'psu') {
         const p = hardwareData.psu || {};
-        detailDialogTitle.textContent = 'Расчет энергопотребления системы (БП)';
+        detailDialogTitle.textContent = isEn ? 'System Power Estimation (PSU)' : 'Расчет энергопотребления системы (БП)';
         detailDialogBody.innerHTML = `
-          <p><strong>Пиковая нагрузка:</strong> ${p.total_peak_w} Вт</p>
-          <p><strong>Рекомендуемая мощность:</strong> ${p.recommended_psu_w}</p>
-          <p><strong>Сертификат:</strong> ${p.recommended_cert}</p>
+          <p><strong>${isEn ? 'Peak Load:' : 'Пиковая нагрузка:'}</strong> ${p.total_peak_w} ${uW}</p>
+          <p><strong>${isEn ? 'Recommended Power:' : 'Рекомендуемая мощность:'}</strong> ${isEn && p.recommended_psu_w ? p.recommended_psu_w.replace('Вт', 'W') : p.recommended_psu_w}</p>
+          <p><strong>${isEn ? 'Certificate:' : 'Сертификат:'}</strong> ${p.recommended_cert}</p>
           <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 8px;">${p.note}</p>
         `;
       }
@@ -959,6 +1062,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getCategoryBadge(cat) {
+    const isEn = window.i18n?.getLang() === 'en';
     if (cat === 'game') {
       return `
         <span class="app-cat-badge game">
@@ -967,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/>
             <rect width="20" height="12" x="2" y="6" rx="6"/>
           </svg>
-          <span>Игра</span>
+          <span>${isEn ? 'Game' : 'Игра'}</span>
         </span>
       `;
     } else if (cat === 'junk') {
@@ -977,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
             <line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
           </svg>
-          <span>Мусорное</span>
+          <span>${isEn ? 'Junk' : 'Мусорное'}</span>
         </span>
       `;
     } else if (cat === 'system') {
@@ -986,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/>
           </svg>
-          <span>Система</span>
+          <span>${isEn ? 'System' : 'Система'}</span>
         </span>
       `;
     } else {
@@ -995,7 +1099,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/>
           </svg>
-          <span>Программа</span>
+          <span>${isEn ? 'Application' : 'Программа'}</span>
         </span>
       `;
     }
@@ -1094,53 +1198,62 @@ document.addEventListener('DOMContentLoaded', () => {
     if (countApp) countApp.textContent = appApps.length;
     if (countSystem) countSystem.textContent = sysApps.length;
 
+    const isEn = window.i18n?.getLang() === 'en';
+    const uGb = isEn ? 'GB' : 'ГБ';
+    const uMb = isEn ? 'MB' : 'МБ';
+
     // Dynamically calculate size and description based on currentCategoryFilter
     let activeList = allInstalledApps;
-    let countPrefix = 'Всего приложений:';
+    let countPrefix = isEn ? 'Total applications:' : 'Всего приложений:';
     let countColor = '#FFFFFF';
     let activeCount = totalApps;
-    let sizePrefix = 'Занято на диске:';
+    let sizePrefix = isEn ? 'Total disk space:' : 'Занято на диске:';
 
     if (currentCategoryFilter === 'game') {
       activeList = gameApps;
-      countPrefix = 'Игр в системе:';
+      countPrefix = isEn ? 'Games detected:' : 'Игр в системе:';
       countColor = '#FBBF24';
       activeCount = gameApps.length;
-      sizePrefix = 'Занято играми:';
+      sizePrefix = isEn ? 'Games size:' : 'Занято играми:';
     } else if (currentCategoryFilter === 'junk') {
       activeList = junkApps;
-      countPrefix = 'Мусорных программ:';
+      countPrefix = isEn ? 'Junk apps:' : 'Мусорных программ:';
       countColor = '#F87171';
       activeCount = junkApps.length;
-      sizePrefix = 'Занято мусором:';
+      sizePrefix = isEn ? 'Junk size:' : 'Занято мусором:';
     } else if (currentCategoryFilter === 'app') {
       activeList = appApps;
-      countPrefix = 'Обычных программ:';
+      countPrefix = isEn ? 'Regular programs:' : 'Обычных программ:';
       countColor = '#818CF8';
       activeCount = appApps.length;
-      sizePrefix = 'Занято программами:';
+      sizePrefix = isEn ? 'Apps size:' : 'Занято программами:';
     } else if (currentCategoryFilter === 'system') {
       activeList = sysApps;
-      countPrefix = 'Системных пакетов:';
+      countPrefix = isEn ? 'System packages:' : 'Системных пакетов:';
       countColor = '#34D399';
       activeCount = sysApps.length;
-      sizePrefix = 'Занято системой:';
+      sizePrefix = isEn ? 'System size:' : 'Занято системой:';
     }
 
     const totalSizeMb = activeList.reduce((acc, a) => acc + (a.estimated_size_mb || 0), 0);
-    const totalSizeGb = totalSizeMb >= 1024 ? `${(totalSizeMb / 1024).toFixed(1)} ГБ` : `${Math.round(totalSizeMb)} МБ`;
+    const totalSizeGb = totalSizeMb >= 1024 ? `${(totalSizeMb / 1024).toFixed(1)} ${uGb}` : `${Math.round(totalSizeMb)} ${uMb}`;
+    const hintText = isEn ? 'Click "Force Clean" for instant removal' : 'Нажмите «Принудительно» для быстрой очистки';
 
     if (uninstallerHeroStats) {
       uninstallerHeroStats.innerHTML = `
         ${countPrefix} <strong style="color: ${countColor};">${activeCount}</strong> • 
         ${sizePrefix} <strong style="color: #60A5FA;">~${totalSizeGb}</strong> • 
-        Нажмите «Принудительно» для быстрой очистки
+        ${hintText}
       `;
     }
   }
 
   function renderInstalledApps() {
     if (!appsListContainer) return;
+
+    const isEn = window.i18n?.getLang() === 'en';
+    const uGb = isEn ? 'GB' : 'ГБ';
+    const uMb = isEn ? 'MB' : 'МБ';
 
     let filtered = [...allInstalledApps];
 
@@ -1158,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentSortMode === 'size') {
       filtered.sort((a, b) => (b.estimated_size_mb || 0) - (a.estimated_size_mb || 0));
     } else if (currentSortMode === 'name') {
-      filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'));
+      filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '', isEn ? 'en' : 'ru'));
     } else if (currentSortMode === 'date') {
       filtered.sort((a, b) => (b.install_date || '').localeCompare(a.install_date || ''));
     }
@@ -1166,7 +1279,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filtered.length === 0) {
       appsListContainer.innerHTML = `
         <div class="apps-empty-state">
-          <span>Приложения не найдены по заданным критериям</span>
+          <span>${isEn ? 'No applications found matching criteria' : 'Приложения не найдены по заданным критериям'}</span>
         </div>
       `;
       return;
@@ -1174,7 +1287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     appsListContainer.innerHTML = filtered.map(app => {
       const sizeMb = app.estimated_size_mb || 0;
-      let sizeFormatted = sizeMb >= 1024 ? `${(sizeMb / 1024).toFixed(1)} ГБ` : `${Math.round(sizeMb)} МБ`;
+      let sizeFormatted = sizeMb >= 1024 ? `${(sizeMb / 1024).toFixed(1)} ${uGb}` : `${Math.round(sizeMb)} ${uMb}`;
       if (sizeMb <= 0) sizeFormatted = '—';
 
       const cat = app.category || 'app';
@@ -1199,12 +1312,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${categoryBadgeHtml}
               </div>
               <div class="app-sub-row">
-                <span class="app-sub-publisher">${escapeHtml(app.publisher || 'Неизвестный разработчик')}</span>
+                <span class="app-sub-publisher">${escapeHtml(app.publisher || (isEn ? 'Unknown publisher' : 'Неизвестный разработчик'))}</span>
                 <span class="app-sub-divider">•</span>
                 <span>v${escapeHtml(app.version || '1.0')}</span>
                 ${app.install_date && app.install_date !== '—' ? `
                   <span class="app-sub-divider">•</span>
-                  <span>Установлено: ${escapeHtml(app.install_date)}</span>
+                  <span>${isEn ? 'Installed:' : 'Установлено:'} ${escapeHtml(app.install_date)}</span>
                 ` : ''}
               </div>
             </div>
@@ -1213,20 +1326,20 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="app-item-right">
             <div class="app-size-badge">
               <span class="app-size-val">${sizeFormatted}</span>
-              <span class="app-size-lbl">На диске</span>
+              <span class="app-size-lbl">${isEn ? 'On disk' : 'На диске'}</span>
             </div>
 
             <div class="app-actions-group">
-              <button class="app-action-btn btn-clean-uninstall" data-action="uninstall" data-app-id="${app.id}" title="Штатное удаление с поиском остаточных файлов">
+              <button class="app-action-btn btn-clean-uninstall" data-action="uninstall" data-app-id="${app.id}" title="${isEn ? 'Clean uninstall with leftover scanning' : 'Штатное удаление с поиском остаточных файлов'}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                 </svg>
-                <span>Удалить</span>
+                <span>${isEn ? 'Uninstall' : 'Удалить'}</span>
               </button>
 
-              <button class="app-action-btn btn-force-remove" data-action="force" data-app-id="${app.id}" title="Принудительное удаление без запуска штатного деинсталлятора">
-                <span>Принудительно</span>
+              <button class="app-action-btn btn-force-remove" data-action="force" data-app-id="${app.id}" title="${isEn ? 'Force removal without running default uninstaller' : 'Принудительное удаление без запуска штатного деинсталлятора'}">
+                <span>${isEn ? 'Force Clean' : 'Принудительно'}</span>
               </button>
             </div>
           </div>
@@ -1278,20 +1391,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function handleCleanUninstallFlow(app, btn) {
+    const isEn = window.i18n?.getLang() === 'en';
     const origText = btn.innerHTML;
-    btn.innerHTML = '<span>Запуск...</span>';
+    btn.innerHTML = `<span>${isEn ? 'Starting...' : 'Запуск...'}</span>`;
     btn.style.pointerEvents = 'none';
 
     try {
       const res = await window.api.runStandardUninstall(app);
       if (!res.success && res.error) {
-        alert(`Не удалось запустить штатный деинсталлятор: ${res.error}\n\nВы можете воспользоваться кнопкой «Принудительно».`);
+        alert(isEn
+          ? `Could not start standard uninstaller: ${res.error}\n\nYou may use the "Force Clean" option.`
+          : `Не удалось запустить штатный деинсталлятор: ${res.error}\n\nВы можете воспользоваться кнопкой «Принудительно».`);
         btn.innerHTML = origText;
         btn.style.pointerEvents = '';
         return;
       }
 
-      btn.innerHTML = '<span>Поиск следов...</span>';
+      btn.innerHTML = `<span>${isEn ? 'Scanning leftovers...' : 'Поиск следов...'}</span>`;
 
       const scanRes = await window.api.scanAppResiduals(app);
       btn.innerHTML = origText;
@@ -1310,11 +1426,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function handleForceRemovalFlow(app, btn) {
-    const confirmPrompt = confirm(`Принудительно удалить «${app.name}»?\n\nФайлы программы, записи реестра и временные данные будут удалены.`);
+    const isEn = window.i18n?.getLang() === 'en';
+    const confirmPrompt = confirm(isEn
+      ? `Force remove "${app.name}"?\n\nApplication files, registry keys, and temporary directories will be deleted.`
+      : `Принудительно удалить «${app.name}»?\n\nФайлы программы, записи реестра и временные данные будут удалены.`);
     if (!confirmPrompt) return;
 
     const origText = btn.innerHTML;
-    btn.innerHTML = '<span>Удаление...</span>';
+    btn.innerHTML = `<span>${isEn ? 'Removing...' : 'Удаление...'}</span>`;
     btn.style.pointerEvents = 'none';
 
     try {
@@ -1322,10 +1441,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res && res.success) {
         loadInstalledApps(true);
       } else {
-        alert(`Ошибка при принудительном удалении: ${(res && res.error) || 'Неизвестная ошибка'}`);
+        alert(isEn
+          ? `Error during force removal: ${(res && res.error) || 'Unknown error'}`
+          : `Ошибка при принудительном удалении: ${(res && res.error) || 'Неизвестная ошибка'}`);
       }
     } catch (err) {
-      alert(`Ошибка: ${err}`);
+      alert(`Error: ${err}`);
     } finally {
       btn.innerHTML = origText;
       btn.style.pointerEvents = '';
@@ -1336,8 +1457,12 @@ document.addEventListener('DOMContentLoaded', () => {
     activeResidualsApp = app;
     currentResidualItems = items;
 
+    const isEn = window.i18n?.getLang() === 'en';
+    const uGb = isEn ? 'GB' : 'ГБ';
+    const uMb = isEn ? 'MB' : 'МБ';
+
     if (resTargetAppName) resTargetAppName.textContent = app.name;
-    if (resFoundSize) resFoundSize.textContent = totalSizeMb >= 1024 ? `${(totalSizeMb / 1024).toFixed(1)} ГБ` : `${totalSizeMb} МБ`;
+    if (resFoundSize) resFoundSize.textContent = totalSizeMb >= 1024 ? `${(totalSizeMb / 1024).toFixed(1)} ${uGb}` : `${totalSizeMb} ${uMb}`;
     
     const fileCount = items.filter(i => i.type !== 'registry').length;
     const regCount = items.filter(i => i.type === 'registry').length;
@@ -1364,7 +1489,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="res-item-path" title="${escapeHtml(item.path)}">${escapeHtml(item.path)}</span>
             <span class="res-item-cat">${escapeHtml(item.category || item.type)}</span>
           </div>
-          <span class="res-item-size">${item.size_mb > 0 ? (item.size_mb >= 1024 ? `${(item.size_mb / 1024).toFixed(1)} ГБ` : `${item.size_mb} МБ`) : ''}</span>
+          <span class="res-item-size">${item.size_mb > 0 ? (item.size_mb >= 1024 ? `${(item.size_mb / 1024).toFixed(1)} ${uGb}` : `${item.size_mb} ${uMb}`) : ''}</span>
         </div>
       `).join('');
     }
@@ -1413,11 +1538,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Residuals Dialog Actions
   residualsToggleAll?.addEventListener('click', () => {
+    const isEn = window.i18n?.getLang() === 'en';
     const checkboxes = residualsItemsTree?.querySelectorAll('input[type="checkbox"]');
     if (!checkboxes) return;
     const allChecked = Array.from(checkboxes).every(cb => cb.checked);
     checkboxes.forEach(cb => { cb.checked = !allChecked; });
-    residualsToggleAll.textContent = allChecked ? 'Выбрать все' : 'Снять выбор';
+    residualsToggleAll.textContent = allChecked
+      ? (isEn ? 'Select All' : 'Выбрать все')
+      : (isEn ? 'Deselect All' : 'Снять выбор');
   });
 
   residualsBtnPurge?.addEventListener('click', async () => {
@@ -1426,6 +1554,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const isEn = window.i18n?.getLang() === 'en';
     const checkboxes = residualsItemsTree?.querySelectorAll('input[type="checkbox"]');
     const selectedItems = [];
     checkboxes?.forEach(cb => {
@@ -1437,7 +1566,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    residualsBtnPurge.innerHTML = '<span>Очистка...</span>';
+    residualsBtnPurge.innerHTML = `<span>${isEn ? 'Cleaning...' : 'Очистка...'}</span>`;
     residualsBtnPurge.style.pointerEvents = 'none';
 
     try {
@@ -1445,14 +1574,14 @@ document.addEventListener('DOMContentLoaded', () => {
       residualsDialog?.close();
       loadInstalledApps(true);
     } catch (err) {
-      alert(`Ошибка при удалении остатков: ${err}`);
+      alert(isEn ? `Error while deleting leftovers: ${err}` : `Ошибка при удалении остатков: ${err}`);
     } finally {
       residualsBtnPurge.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="3 6 5 6 21 6"></polyline>
           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
         </svg>
-        <span>Очистить остатки</span>
+        <span>${isEn ? 'Clean Leftovers' : 'Очистить остатки'}</span>
       `;
       residualsBtnPurge.style.pointerEvents = '';
     }
@@ -1555,14 +1684,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Render components
       if (data.components && Array.isArray(data.components) && weiComponentsList) {
+        const isEn = window.i18n?.getLang() === 'en';
         weiComponentsList.innerHTML = data.components.map(comp => {
           const score = Number(comp.score) || 0;
           const pct = Math.min(100, Math.max(10, Math.round((score / 9.9) * 100)));
+          let name = comp.name;
+          let desc = comp.desc;
+          if (isEn) {
+            if (name.includes('Процессор')) { name = 'Processor (CPU)'; desc = 'Calculations per second'; }
+            else if (name.includes('Память')) { name = 'Memory (RAM)'; desc = 'Memory operations per second'; }
+            else if (name.includes('для игр')) { name = 'Gaming Graphics'; desc = '3D gaming and graphics throughput'; }
+            else if (name.includes('Графика')) { name = 'Desktop Graphics'; desc = 'Desktop interface & compositing performance'; }
+            else if (name.includes('диск') || name.includes('жесткий')) { name = 'Primary Storage'; desc = 'Disk data transfer rate'; }
+          }
           return `
             <div class="wei-component-row">
               <div class="wei-comp-left">
-                <span class="wei-comp-name">${comp.name}</span>
-                <span class="wei-comp-desc">${comp.desc}</span>
+                <span class="wei-comp-name">${name}</span>
+                <span class="wei-comp-desc">${desc}</span>
               </div>
               <div class="wei-comp-bar-container">
                 <div class="wei-comp-bar-fill" style="width: ${pct}%;"></div>

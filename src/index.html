@@ -115,14 +115,14 @@
                 <div class="card-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/></svg>
                 </div>
-                <span class="card-title">Процессор (CPU)</span>
+                <span class="card-title" data-i18n="card_cpu">Процессор (CPU)</span>
               </div>
-              <button class="card-detail-btn" data-detail="cpu">Детали</button>
+              <button class="card-detail-btn" data-detail="cpu" data-i18n="card_details">Детали</button>
             </div>
-            <div class="card-main-name" id="cpu-name">Загрузка данных...</div>
+            <div class="card-main-name" id="cpu-name" data-i18n="card_loading">Загрузка данных...</div>
             <div class="metric-bar-group">
               <div class="metric-bar-labels">
-                <span>Загрузка ядер</span>
+                <span data-i18n="cpu_usage">Загрузка ядер</span>
                 <strong id="cpu-usage-val">0%</strong>
               </div>
               <div class="metric-progress-bg">
@@ -132,12 +132,12 @@
           </div>
 
           <div class="card-specs-grid">
-            <div class="spec-cell"><span class="spec-k">Сокет</span> <strong class="spec-v" id="cpu-socket">AM4</strong></div>
-            <div class="spec-cell"><span class="spec-k">Ядра / Потоки</span> <strong class="spec-v" id="cpu-cores">6 / 12</strong></div>
-            <div class="spec-cell"><span class="spec-k">Базовая частота</span> <strong class="spec-v" id="cpu-clock">3801 МГц</strong></div>
-            <div class="spec-cell"><span class="spec-k">Кэш L2 / L3</span> <strong class="spec-v" id="cpu-cache">3 МБ / 32 МБ</strong></div>
-            <div class="spec-cell"><span class="spec-k">Архитектура</span> <strong class="spec-v" id="cpu-arch">x64 (Zen 2)</strong></div>
-            <div class="spec-cell"><span class="spec-k">Расчетный TDP</span> <strong class="spec-v" id="cpu-tdp">95 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="cpu_socket">Сокет</span> <strong class="spec-v" id="cpu-socket">AM4</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="cpu_cores">Ядра / Потоки</span> <strong class="spec-v" id="cpu-cores">6 / 12</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="cpu_clock">Базовая частота</span> <strong class="spec-v" id="cpu-clock">3801 МГц</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="cpu_cache">Кэш L2 / L3</span> <strong class="spec-v" id="cpu-cache">3 МБ / 32 МБ</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="cpu_arch">Архитектура</span> <strong class="spec-v" id="cpu-arch">x64 (Zen 2)</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="cpu_tdp">Расчетный TDP</span> <strong class="spec-v" id="cpu-tdp">95 Вт</strong></div>
           </div>
         </article>
 
@@ -149,14 +149,14 @@
                 <div class="card-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>
                 </div>
-                <span class="card-title">Видеокарта (GPU)</span>
+                <span class="card-title" data-i18n="card_gpu">Видеокарта (GPU)</span>
               </div>
-              <button class="card-detail-btn" data-detail="gpu">Детали</button>
+              <button class="card-detail-btn" data-detail="gpu" data-i18n="card_details">Детали</button>
             </div>
-            <div class="card-main-name" id="gpu-name">Загрузка данных...</div>
+            <div class="card-main-name" id="gpu-name" data-i18n="card_loading">Загрузка данных...</div>
             <div class="metric-bar-group">
               <div class="metric-bar-labels">
-                <span>Температура & Энергия</span>
+                <span data-i18n="gpu_temp_power">Температура & Энергия</span>
                 <strong id="gpu-temp-val">-- °C</strong>
               </div>
               <div class="metric-progress-bg">
@@ -166,12 +166,12 @@
           </div>
 
           <div class="card-specs-grid">
-            <div class="spec-cell"><span class="spec-k">Видеопамять</span> <strong class="spec-v" id="gpu-vram">8 ГБ GDDR6</strong></div>
-            <div class="spec-cell"><span class="spec-k">Интерфейс шины</span> <strong class="spec-v" id="gpu-bus">PCIe 4.0 x16</strong></div>
-            <div class="spec-cell"><span class="spec-k">Версия драйвера</span> <strong class="spec-v" id="gpu-driver">610.88</strong></div>
-            <div class="spec-cell"><span class="spec-k">Энергопотребление</span> <strong class="spec-v" id="gpu-power">-- Вт</strong></div>
-            <div class="spec-cell"><span class="spec-k">Охлаждение</span> <strong class="spec-v" id="gpu-fan">0% (Fan Stop)</strong></div>
-            <div class="spec-cell"><span class="spec-k">Разрешение</span> <strong class="spec-v" id="gpu-disp">2560x1440 @ 165 Гц</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="gpu_vram">Видеопамять</span> <strong class="spec-v" id="gpu-vram">8 ГБ GDDR6</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="gpu_bus">Интерфейс шины</span> <strong class="spec-v" id="gpu-bus">PCIe 4.0 x16</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="gpu_driver">Версия драйвера</span> <strong class="spec-v" id="gpu-driver">610.88</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="gpu_power">Энергопотребление</span> <strong class="spec-v" id="gpu-power">-- Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="gpu_fan">Охлаждение</span> <strong class="spec-v" id="gpu-fan">0% (Fan Stop)</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="gpu_disp">Разрешение</span> <strong class="spec-v" id="gpu-disp">2560x1440 @ 165 Гц</strong></div>
           </div>
         </article>
 
@@ -183,14 +183,14 @@
                 <div class="card-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><path d="M6 19v-3"/><path d="M10 19v-3"/><path d="M14 19v-3"/><path d="M18 19v-3"/><rect x="2" y="5" width="20" height="11" rx="2"/><path d="M6 5V3"/><path d="M18 5V3"/></svg>
                 </div>
-                <span class="card-title">Оперативная память</span>
+                <span class="card-title" data-i18n="card_ram">Оперативная память</span>
               </div>
-              <button class="card-detail-btn" data-detail="ram">Детали</button>
+              <button class="card-detail-btn" data-detail="ram" data-i18n="card_details">Детали</button>
             </div>
-            <div class="card-main-name" id="ram-name">Загрузка данных...</div>
+            <div class="card-main-name" id="ram-name" data-i18n="card_loading">Загрузка данных...</div>
             <div class="metric-bar-group">
               <div class="metric-bar-labels">
-                <span>Использование RAM</span>
+                <span data-i18n="ram_usage">Использование RAM</span>
                 <strong id="ram-usage-val">-- / -- ГБ</strong>
               </div>
               <div class="metric-progress-bg">
@@ -200,12 +200,12 @@
           </div>
 
           <div class="card-specs-grid">
-            <div class="spec-cell"><span class="spec-k">Частота памяти</span> <strong class="spec-v" id="ram-speed">3200 МГц</strong></div>
-            <div class="spec-cell"><span class="spec-k">Профиль DOCP</span> <strong class="spec-v" id="ram-xmp">Активен</strong></div>
-            <div class="spec-cell"><span class="spec-k">Конфигурация</span> <strong class="spec-v" id="ram-modules">2 из 4 (A2/B2)</strong></div>
-            <div class="spec-cell"><span class="spec-k">Режим шины</span> <strong class="spec-v" id="ram-channel">Dual-Channel</strong></div>
-            <div class="spec-cell"><span class="spec-k">Маркировка</span> <strong class="spec-v" id="ram-parts">Kingston KF3200</strong></div>
-            <div class="spec-cell"><span class="spec-k">Доступно памяти</span> <strong class="spec-v" id="ram-avail">-- ГБ</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="ram_speed">Частота памяти</span> <strong class="spec-v" id="ram-speed">3200 МГц</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="ram_profile">Профиль DOCP</span> <strong class="spec-v" id="ram-xmp">Активен</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="ram_config">Конфигурация</span> <strong class="spec-v" id="ram-modules">2 из 4 (A2/B2)</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="ram_channel">Режим шины</span> <strong class="spec-v" id="ram-channel">Dual-Channel</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="ram_parts">Маркировка</span> <strong class="spec-v" id="ram-parts">Kingston KF3200</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="ram_avail">Доступно памяти</span> <strong class="spec-v" id="ram-avail">-- ГБ</strong></div>
           </div>
         </article>
 
@@ -217,11 +217,11 @@
                 <div class="card-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" x2="6.01" y1="16" y2="16"/><line x1="10" x2="10.01" y1="16" y2="16"/></svg>
                 </div>
-                <span class="card-title">Накопители (SSD/HDD)</span>
+                <span class="card-title" data-i18n="card_storage">Накопители (SSD/HDD)</span>
               </div>
-              <button class="card-detail-btn" data-detail="storage">Детали</button>
+              <button class="card-detail-btn" data-detail="storage" data-i18n="card_details">Детали</button>
             </div>
-            <div class="card-main-name" id="storage-name">Загрузка данных...</div>
+            <div class="card-main-name" id="storage-name" data-i18n="card_loading">Загрузка данных...</div>
             
             <!-- Multi-drive Mini Progress Bars -->
             <div class="storage-mini-container" id="storage-drives-list">
@@ -230,10 +230,10 @@
           </div>
 
           <div class="card-specs-grid">
-            <div class="spec-cell"><span class="spec-k">Системный диск</span> <strong class="spec-v" id="storage-sys-disk">C: (NVMe SSD)</strong></div>
-            <div class="spec-cell"><span class="spec-k">Всего накопителей</span> <strong class="spec-v" id="storage-count">3 шт.</strong></div>
-            <div class="spec-cell span-2"><span class="spec-k">Общий объем</span> <strong class="spec-v" id="storage-total-cap">1.63 ТБ</strong></div>
-            <div class="spec-cell span-2"><span class="spec-k">Типы шины</span> <strong class="spec-v" id="storage-bus">NVMe PCIe + SATA</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="storage_sys">Системный диск</span> <strong class="spec-v" id="storage-sys-disk">C: (NVMe SSD)</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="storage_count">Всего накопителей</span> <strong class="spec-v" id="storage-count">3 шт.</strong></div>
+            <div class="spec-cell span-2"><span class="spec-k" data-i18n="storage_total">Общий объем</span> <strong class="spec-v" id="storage-total-cap">1.63 ТБ</strong></div>
+            <div class="spec-cell span-2"><span class="spec-k" data-i18n="storage_bus">Типы шины</span> <strong class="spec-v" id="storage-bus">NVMe PCIe + SATA</strong></div>
           </div>
         </article>
 
@@ -245,23 +245,23 @@
                 <div class="card-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M11 9h4a2 2 0 0 0 2-2V3"/><circle cx="9" cy="9" r="2"/><path d="M7 21v-4a2 2 0 0 1 2-2h4"/><circle cx="15" cy="15" r="2"/></svg>
                 </div>
-                <span class="card-title">Материнская плата</span>
+                <span class="card-title" data-i18n="card_mobo">Материнская плата</span>
               </div>
-              <button class="card-detail-btn" data-detail="mobo">Детали</button>
+              <button class="card-detail-btn" data-detail="mobo" data-i18n="card_details">Детали</button>
             </div>
-            <div class="card-main-name" id="mobo-name">Загрузка данных...</div>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">
+            <div class="card-main-name" id="mobo-name" data-i18n="card_loading">Загрузка данных...</div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;" data-i18n="mobo_desc">
               Системная платформа с поддержкой высокоскоростных интерфейсов PCIe 4.0 и разгона памяти DOCP.
             </p>
           </div>
 
           <div class="card-specs-grid">
-            <div class="spec-cell"><span class="spec-k">Производитель</span> <strong class="spec-v" id="mobo-mfg">ASUSTeK</strong></div>
-            <div class="spec-cell"><span class="spec-k">Чипсет платы</span> <strong class="spec-v" id="mobo-chipset">AMD B550</strong></div>
-            <div class="spec-cell"><span class="spec-k">Версия BIOS</span> <strong class="spec-v" id="mobo-bios">2403</strong></div>
-            <div class="spec-cell"><span class="spec-k">Дата BIOS</span> <strong class="spec-v" id="mobo-date">16.06.2021</strong></div>
-            <div class="spec-cell"><span class="spec-k">Сокет процессора</span> <strong class="spec-v" id="mobo-socket">Socket AM4</strong></div>
-            <div class="spec-cell"><span class="spec-k">Шина PCIe</span> <strong class="spec-v" id="mobo-pcie">PCIe Gen 4 Ready</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="mobo_mfg">Производитель</span> <strong class="spec-v" id="mobo-mfg">ASUSTeK</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="mobo_chipset">Чипсет платы</span> <strong class="spec-v" id="mobo-chipset">AMD B550</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="mobo_bios">Версия BIOS</span> <strong class="spec-v" id="mobo-bios">2403</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="mobo_date">Дата BIOS</span> <strong class="spec-v" id="mobo-date">16.06.2021</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="mobo_socket">Сокет процессора</span> <strong class="spec-v" id="mobo-socket">Socket AM4</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="mobo_pcie">Шина PCIe</span> <strong class="spec-v" id="mobo-pcie">PCIe Gen 4 Ready</strong></div>
           </div>
         </article>
 
@@ -273,23 +273,23 @@
                 <div class="card-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#F43F5E" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
                 </div>
-                <span class="card-title">Дисплеи и Питание</span>
+                <span class="card-title" data-i18n="card_displays">Дисплеи и Питание</span>
               </div>
-              <button class="card-detail-btn" data-detail="psu">Детали</button>
+              <button class="card-detail-btn" data-detail="psu" data-i18n="card_details">Детали</button>
             </div>
-            <div class="card-main-name" id="display-name">Основной монитор: --</div>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">
+            <div class="card-main-name" id="display-name" data-i18n="card_loading">Основной монитор: --</div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;" data-i18n="psu_desc">
               Расчет пикового энергопотребления системы при полной синхронной нагрузке на CPU и GPU.
             </p>
           </div>
 
           <div class="card-specs-grid">
-            <div class="spec-cell"><span class="spec-k">Монитор</span> <strong class="spec-v" id="disp-model">Gigabyte GS27QC</strong></div>
-            <div class="spec-cell"><span class="spec-k">Режим работы</span> <strong class="spec-v" id="disp-mode">2560x1440 @ 165 Гц</strong></div>
-            <div class="spec-cell"><span class="spec-k">Нагрузка CPU/GPU</span> <strong class="spec-v" id="psu-breakdown">95 Вт / 220 Вт</strong></div>
-            <div class="spec-cell"><span class="spec-k">Пиковое потребление</span> <strong class="spec-v" id="psu-draw">375 Вт</strong></div>
-            <div class="spec-cell"><span class="spec-k">Рекомендуемый БП</span> <strong class="spec-v" id="psu-rec">600–650 Вт</strong></div>
-            <div class="spec-cell"><span class="spec-k">Сертификат БП</span> <strong class="spec-v" id="psu-cert">80 PLUS Gold</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="psu_disp_label">Монитор</span> <strong class="spec-v" id="disp-model">Gigabyte GS27QC</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="psu_disp_mode">Режим работы</span> <strong class="spec-v" id="disp-mode">2560x1440 @ 165 Гц</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="psu_load_split">Нагрузка CPU/GPU</span> <strong class="spec-v" id="psu-breakdown">95 Вт / 220 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="psu_peak">Пиковое потребление</span> <strong class="spec-v" id="psu-draw">375 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="psu_rec_w">Рекомендуемый БП</span> <strong class="spec-v" id="psu-rec">600–650 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k" data-i18n="psu_cert_label">Сертификат БП</span> <strong class="spec-v" id="psu-cert">80 PLUS Gold</strong></div>
           </div>
         </article>
 
@@ -305,15 +305,15 @@
           <div class="opt-hero-content">
             <div class="opt-hero-left">
               <div class="opt-status-badge-row">
-                <span class="opt-badge" id="opt-health-badge">Экспресс-аудит</span>
-                <span class="opt-badge-sub" id="opt-health-text">Оценка состояния системы</span>
+                <span class="opt-badge" id="opt-health-badge" data-i18n="opt_badge_express">Экспресс-аудит</span>
+                <span class="opt-badge-sub" id="opt-health-text" data-i18n="opt_badge_eval">Оценка состояния системы</span>
                 <span class="opt-auto-pulse-chip">
                   <span class="opt-pulse-dot"></span>
-                  Автоматический мониторинг
+                  <span data-i18n="opt_auto_monitoring">Автоматический мониторинг</span>
                 </span>
               </div>
-              <h2 class="opt-hero-title" id="opt-hero-title">Анализ ресурсов системы...</h2>
-              <p class="opt-hero-desc" id="opt-hero-desc">
+              <h2 class="opt-hero-title" id="opt-hero-title" data-i18n="opt_hero_idle_title">Анализ ресурсов системы...</h2>
+              <p class="opt-hero-desc" id="opt-hero-desc" data-i18n="opt_hero_idle_desc">
                 Сканирование оперативной памяти, временных файлов, кэша шейдеров и фоновых приложений.
               </p>
             </div>
@@ -330,19 +330,19 @@
             <div class="optimize-steps-list">
               <div class="step-item" id="opt-step-1">
                 <div class="step-icon">1</div>
-                <span>Фоновые лаунчеры</span>
+                <span data-i18n="opt_step_launchers">Фоновые лаунчеры</span>
               </div>
               <div class="step-item" id="opt-step-2">
                 <div class="step-icon">2</div>
-                <span>Кэш памяти RAM</span>
+                <span data-i18n="opt_step_ram">Кэш памяти RAM</span>
               </div>
               <div class="step-item" id="opt-step-3">
                 <div class="step-icon">3</div>
-                <span>Файлы %TEMP%</span>
+                <span data-i18n="opt_step_temp">Файлы %TEMP%</span>
               </div>
               <div class="step-item" id="opt-step-4">
                 <div class="step-icon">4</div>
-                <span>Шейдеры GPU</span>
+                <span data-i18n="opt_step_shaders">Шейдеры GPU</span>
               </div>
             </div>
           </div>
@@ -365,8 +365,8 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="opt-card-title">Оперативная память</h3>
-                  <span class="opt-card-subtitle">Кэш и рабочий набор</span>
+                  <h3 class="opt-card-title" data-i18n="opt_card_ram_title">Оперативная память</h3>
+                  <span class="opt-card-subtitle" data-i18n="opt_card_ram_sub">Кэш и рабочий набор</span>
                 </div>
               </div>
               <span class="opt-card-badge ram-badge" id="opt-badge-ram">EmptyWorkingSet</span>
@@ -374,17 +374,17 @@
 
             <div class="opt-stat-value-group">
               <div class="opt-stat-main" id="opt-val-ram-cleanable">-- МБ</div>
-              <div class="opt-stat-caption">потенциал сброса кэша RAM</div>
+              <div class="opt-stat-caption" data-i18n="opt_caption_ram">потенциал сброса кэша RAM</div>
             </div>
 
             <div class="opt-card-details">
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Текущая загрузка:</span>
+                <span class="opt-detail-k" data-i18n="opt_ram_now_label">Текущая загрузка:</span>
                 <strong class="opt-detail-v" id="opt-val-ram-now">--% (-- / -- ГБ)</strong>
               </div>
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Метод оптимизации:</span>
-                <span class="opt-detail-v">Очистка страниц Win32 API</span>
+                <span class="opt-detail-k" data-i18n="opt_ram_method_label">Метод оптимизации:</span>
+                <span class="opt-detail-v" data-i18n="opt_ram_method_val">Очистка страниц Win32 API</span>
               </div>
             </div>
           </article>
@@ -403,26 +403,26 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="opt-card-title">Системный мусор</h3>
-                  <span class="opt-card-subtitle">Каталог %TEMP%</span>
+                  <h3 class="opt-card-title" data-i18n="opt_card_temp_title">Системный мусор</h3>
+                  <span class="opt-card-subtitle" data-i18n="opt_card_temp_sub">Каталог %TEMP%</span>
                 </div>
               </div>
-              <span class="opt-card-badge temp-badge" id="opt-badge-temp">Временные файлы</span>
+              <span class="opt-card-badge temp-badge" id="opt-badge-temp" data-i18n="opt_card_temp_badge">Временные файлы</span>
             </div>
 
             <div class="opt-stat-value-group">
               <div class="opt-stat-main" id="opt-val-temp-size">-- МБ</div>
-              <div class="opt-stat-caption">накоплено временных файлов</div>
+              <div class="opt-stat-caption" data-i18n="opt_caption_temp">накоплено временных файлов</div>
             </div>
 
             <div class="opt-card-details">
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Количество файлов:</span>
+                <span class="opt-detail-k" data-i18n="opt_temp_count_label">Количество файлов:</span>
                 <strong class="opt-detail-v" id="opt-val-temp-count">-- шт.</strong>
               </div>
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Безопасность:</span>
-                <span class="opt-detail-v">Пропуск заблокированных</span>
+                <span class="opt-detail-k" data-i18n="opt_temp_safe_label">Безопасность:</span>
+                <span class="opt-detail-v" data-i18n="opt_temp_safe_val">Пропуск заблокированных</span>
               </div>
             </div>
           </article>
@@ -439,8 +439,8 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="opt-card-title">Кэш шейдеров GPU</h3>
-                  <span class="opt-card-subtitle">DirectX / Vulkan / NVIDIA / AMD</span>
+                  <h3 class="opt-card-title" data-i18n="opt_card_shader_title">Кэш шейдеров GPU</h3>
+                  <span class="opt-card-subtitle" data-i18n="opt_card_shader_sub">DirectX / Vulkan / NVIDIA / AMD</span>
                 </div>
               </div>
               <span class="opt-card-badge shader-badge" id="opt-badge-shader">GPU Shaders</span>
@@ -448,17 +448,17 @@
 
             <div class="opt-stat-value-group">
               <div class="opt-stat-main" id="opt-val-shader-size">-- МБ</div>
-              <div class="opt-stat-caption">размер дискового кэша шейдеров</div>
+              <div class="opt-stat-caption" data-i18n="opt_caption_shader">размер дискового кэша шейдеров</div>
             </div>
 
             <div class="opt-card-details">
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Файлов шейдеров:</span>
+                <span class="opt-detail-k" data-i18n="opt_shader_count_label">Файлов шейдеров:</span>
                 <strong class="opt-detail-v" id="opt-val-shader-count">-- шт.</strong>
               </div>
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Влияние:</span>
-                <span class="opt-detail-v">Устранение статтеров игр</span>
+                <span class="opt-detail-k" data-i18n="opt_shader_impact_label">Влияние:</span>
+                <span class="opt-detail-v" data-i18n="opt_shader_impact_val">Устранение статтеров игр</span>
               </div>
             </div>
           </article>
@@ -475,8 +475,8 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="opt-card-title">Фоновые клиенты</h3>
-                  <span class="opt-card-subtitle">Лаунчеры и авто-апдейтеры</span>
+                  <h3 class="opt-card-title" data-i18n="opt_card_apps_title">Фоновые клиенты</h3>
+                  <span class="opt-card-subtitle" data-i18n="opt_card_apps_sub">Лаунчеры и авто-апдейтеры</span>
                 </div>
               </div>
               <span class="opt-card-badge apps-badge" id="opt-badge-apps">0 активно</span>
@@ -484,12 +484,12 @@
 
             <div class="opt-stat-value-group">
               <div class="opt-stat-main" id="opt-val-apps-mem">-- МБ</div>
-              <div class="opt-stat-caption">потребляют активные клиенты</div>
+              <div class="opt-stat-caption" data-i18n="opt_caption_apps">потребляют активные клиенты</div>
             </div>
 
             <div class="opt-card-details">
               <div class="opt-detail-row">
-                <span class="opt-detail-k">Найдено процессов:</span>
+                <span class="opt-detail-k" data-i18n="opt_apps_count_label">Найдено процессов:</span>
                 <strong class="opt-detail-v" id="opt-val-apps-count">0 шт.</strong>
               </div>
               <div class="opt-apps-tags" id="opt-apps-tags-list">
@@ -504,19 +504,19 @@
         <div class="optimize-results-grid" id="opt-results-section" style="display: none;">
           <div class="glass-card res-stat-card">
             <div class="res-stat-val" id="res-ram-freed">0 МБ</div>
-            <div class="res-stat-label">Освобождено RAM</div>
+            <div class="res-stat-label" data-i18n="opt_res_ram">Освобождено RAM</div>
           </div>
           <div class="glass-card res-stat-card">
             <div class="res-stat-val" id="res-temp-freed">0 МБ</div>
-            <div class="res-stat-label">Очищено кэша и %TEMP%</div>
+            <div class="res-stat-label" data-i18n="opt_res_temp">Очищено кэша и %TEMP%</div>
           </div>
           <div class="glass-card res-stat-card">
             <div class="res-stat-val" id="res-proc-closed">0</div>
-            <div class="res-stat-label">Выгружено процессов</div>
+            <div class="res-stat-label" data-i18n="opt_res_procs">Выгружено процессов</div>
           </div>
           <div class="glass-card res-stat-card">
             <div class="res-stat-val" id="res-current-ram">0%</div>
-            <div class="res-stat-label">Текущая загрузка RAM</div>
+            <div class="res-stat-label" data-i18n="opt_res_ram_cur">Текущая загрузка RAM</div>
           </div>
         </div>
       </div>
@@ -531,10 +531,10 @@
           <div class="uninstaller-hero-top">
             <div class="uninstaller-hero-left">
               <div class="uninstaller-badges-row">
-                <span class="opt-badge uninstaller-badge-cat">Менеджер программ</span>
+                <span class="opt-badge uninstaller-badge-cat" data-i18n="uninst_badge">Менеджер программ</span>
               </div>
-              <h2 class="uninstaller-hero-title">Установленные приложения</h2>
-              <p class="uninstaller-hero-desc" id="uninstaller-hero-stats">
+              <h2 class="uninstaller-hero-title" data-i18n="uninst_title">Установленные приложения</h2>
+              <p class="uninstaller-hero-desc" id="uninstaller-hero-stats" data-i18n="uninst_scanning">
                 Сканирование реестра и хранилища Windows...
               </p>
             </div>
@@ -546,8 +546,8 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" id="uninstaller-search-input" placeholder="Поиск по названию или издателю..." spellcheck="false" autocomplete="off">
-                <button class="search-clear-btn" id="uninstaller-search-clear" title="Очистить поиск" style="display: none;">✕</button>
+                <input type="text" id="uninstaller-search-input" placeholder="Поиск по названию или издателю..." data-i18n-placeholder="uninst_search_placeholder" spellcheck="false" autocomplete="off">
+                <button class="search-clear-btn" id="uninstaller-search-clear" title="Очистить поиск" data-i18n-title="uninst_search_clear" style="display: none;">✕</button>
               </div>
             </div>
           </div>
@@ -559,7 +559,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
                 </svg>
-                <span>Все</span> (<span id="count-all">0</span>)
+                <span data-i18n="uninst_filter_all">Все</span> (<span id="count-all">0</span>)
               </button>
 
               <button class="liquid-pill" data-filter="game">
@@ -568,7 +568,7 @@
                   <line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/>
                   <rect width="20" height="12" x="2" y="6" rx="6"/>
                 </svg>
-                <span>Игры</span> (<span id="count-game">0</span>)
+                <span data-i18n="uninst_filter_game">Игры</span> (<span id="count-game">0</span>)
               </button>
 
               <button class="liquid-pill" data-filter="junk">
@@ -576,14 +576,14 @@
                   <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
                   <line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
                 </svg>
-                <span>Мусорные</span> (<span id="count-junk">0</span>)
+                <span data-i18n="uninst_filter_junk">Мусорные</span> (<span id="count-junk">0</span>)
               </button>
 
               <button class="liquid-pill" data-filter="app">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
                 </svg>
-                <span>Программы</span> (<span id="count-app">0</span>)
+                <span data-i18n="uninst_filter_app">Программы</span> (<span id="count-app">0</span>)
               </button>
 
               <button class="liquid-pill" data-filter="system">
@@ -591,16 +591,16 @@
                   <rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/>
                   <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>
                 </svg>
-                <span>Система</span> (<span id="count-system">0</span>)
+                <span data-i18n="uninst_filter_system">Система</span> (<span id="count-system">0</span>)
               </button>
             </div>
 
             <div class="uninstaller-sort-group">
-              <span class="sort-label">Сортировка:</span>
+              <span class="sort-label" data-i18n="uninst_sort_label">Сортировка:</span>
               <div class="uninstaller-pills-group" id="uninstaller-sort-filters">
-                <button class="liquid-pill active" data-sort="size">По размеру</button>
-                <button class="liquid-pill" data-sort="name">По имени</button>
-                <button class="liquid-pill" data-sort="date">По дате</button>
+                <button class="liquid-pill active" data-sort="size" data-i18n="uninst_sort_size">По размеру</button>
+                <button class="liquid-pill" data-sort="name" data-i18n="uninst_sort_name">По имени</button>
+                <button class="liquid-pill" data-sort="date" data-i18n="uninst_sort_date">По дате</button>
               </div>
             </div>
           </div>
@@ -610,7 +610,7 @@
         <div class="apps-list-container" id="apps-list-container">
           <div class="apps-loading-state" id="apps-loading-state">
             <div class="apps-spinner"></div>
-            <span>Поиск и расчёт размера установленных приложений...</span>
+            <span data-i18n="uninst_loading">Поиск и расчёт размера установленных приложений...</span>
           </div>
         </div>
 
@@ -622,13 +622,13 @@
       <div class="startup-container">
         <div class="glass-card startup-header-bar">
           <div>
-            <h3 style="font-size: 14.5px; font-weight: 600; color: #FFFFFF;">Активные программы в автозагрузке Windows</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+            <h3 style="font-size: 14.5px; font-weight: 600; color: #FFFFFF;" data-i18n="startup_header_title">Активные программы в автозагрузке Windows</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" data-i18n="startup_header_desc">
               Отображаются только те процессы, которые сейчас реально включены и запускаются при старте Windows.
             </p>
           </div>
           <div class="startup-stats-summary" id="startup-stats-text">
-            Активных процессов: <strong style="color: #10B981;">--</strong>
+            <span data-i18n="startup_active_summary">Активных процессов:</span> <strong style="color: #10B981;">--</strong>
           </div>
         </div>
 
@@ -640,24 +640,24 @@
                 <img src="../assets/logo.png" alt="Logo" class="thecore-inline-logo">
                 TheCore
               </span>
-              <span class="startup-location-tag thecore-tag">Фоновый режим</span>
+              <span class="startup-location-tag thecore-tag" data-i18n="thecore_autostart_tag">Фоновый режим</span>
             </div>
             <div class="startup-badges-row">
               <span class="startup-chip impact-low">
                 <span class="chip-dot"></span>
-                Низкое влияние (~0.05 сек)
+                <span data-i18n="thecore_autostart_impact">Низкое влияние (~0.05 сек)</span>
               </span>
-              <span class="startup-chip rec-safe">
+              <span class="startup-chip rec-safe" data-i18n="thecore_autostart_rec">
                 Рекомендуется
               </span>
             </div>
-            <div class="startup-desc">
+            <div class="startup-desc" data-i18n="thecore_autostart_info">
               Бесшумный запуск в системный трей при включении Windows для непрерывного мониторинга датчиков и мгновенной оптимизации.
             </div>
             <div class="startup-cmd" title="TheCore.exe --hidden">TheCore.exe --hidden</div>
           </div>
           <div class="startup-card-right">
-            <label class="toggle-switch" title="Включить / Отключить автозапуск TheCore">
+            <label class="toggle-switch" title="Включить / Отключить автозапуск TheCore" data-i18n-title="thecore_autostart_toggle_title">
               <input type="checkbox" id="thecore-autostart-toggle" class="thecore-toggle-input">
               <span class="slider"></span>
             </label>
@@ -695,7 +695,7 @@
   <!-- Component Detail Inspection Dialog -->
   <dialog id="details-dialog" aria-labelledby="detailDialogTitle">
     <div class="modal-header">
-      <h3 class="modal-title" id="detailDialogTitle">Спецификация компонента</h3>
+      <h3 class="modal-title" id="detailDialogTitle" data-i18n="detail_modal_title">Спецификация компонента</h3>
       <button class="card-detail-btn" id="detail-close-btn">✕</button>
     </div>
     <div class="modal-body" id="detailDialogBody">
@@ -707,8 +707,8 @@
   <dialog id="residuals-dialog" aria-labelledby="residualsDialogTitle">
     <div class="modal-header residuals-modal-header">
       <div class="residuals-modal-title-wrap">
-        <h3 class="modal-title" id="residualsDialogTitle">Найденные остатки</h3>
-        <span class="residuals-modal-sub" id="res-target-app-name">Приложение</span>
+        <h3 class="modal-title" id="residualsDialogTitle" data-i18n="residuals_title">Найденные остатки</h3>
+        <span class="residuals-modal-sub" id="res-target-app-name" data-i18n="residuals_app_label">Приложение</span>
       </div>
       <button class="modal-close-icon-btn" id="residuals-close-btn" title="Закрыть">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -723,22 +723,22 @@
       <div class="residuals-stats-ribbon">
         <div class="residuals-stat-card">
           <span class="res-stat-mini-val" id="res-found-size">0 МБ</span>
-          <span class="res-stat-mini-lbl">Мусора на диске</span>
+          <span class="res-stat-mini-lbl" data-i18n="residuals_stat_disk">Мусора на диске</span>
         </div>
         <div class="residuals-stat-card">
           <span class="res-stat-mini-val" id="res-found-files">0</span>
-          <span class="res-stat-mini-lbl">Папок и файлов</span>
+          <span class="res-stat-mini-lbl" data-i18n="residuals_stat_files">Папок и файлов</span>
         </div>
         <div class="residuals-stat-card">
           <span class="res-stat-mini-val" id="res-found-reg">0</span>
-          <span class="res-stat-mini-lbl">Записей реестра</span>
+          <span class="res-stat-mini-lbl" data-i18n="residuals_stat_reg">Записей реестра</span>
         </div>
       </div>
 
       <!-- Residual Items Tree / List -->
       <div class="residuals-list-header">
-        <span>Обнаруженные остаточные элементы:</span>
-        <button class="residuals-select-all-btn" id="residuals-toggle-all">Снять выбор</button>
+        <span data-i18n="residuals_items_found">Обнаруженные остаточные элементы:</span>
+        <button class="residuals-select-all-btn" id="residuals-toggle-all" data-i18n="residuals_unselect_all">Снять выбор</button>
       </div>
 
       <div class="residuals-items-tree" id="residuals-items-tree">
@@ -747,13 +747,13 @@
     </div>
 
     <div class="residuals-modal-footer">
-      <button class="residuals-btn-cancel" id="residuals-btn-cancel">Пропустить</button>
+      <button class="residuals-btn-cancel" id="residuals-btn-cancel" data-i18n="residuals_btn_cancel">Пропустить</button>
       <button class="residuals-btn-purge" id="residuals-btn-purge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="3 6 5 6 21 6"></polyline>
           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
         </svg>
-        <span>Очистить остатки</span>
+        <span data-i18n="residuals_btn_purge">Очистить остатки</span>
       </button>
     </div>
   </dialog>
@@ -769,7 +769,7 @@
           </svg>
         </div>
         <div>
-          <h3 class="settings-modal-title">Параметры и оценка системы</h3>
+          <h3 class="settings-modal-title" data-i18n="settings_header_title">Параметры и оценка системы</h3>
           <p class="settings-modal-sub">TheCore Control & Performance Hub</p>
         </div>
       </div>
@@ -789,7 +789,7 @@
           <div class="settings-section-head">
             <div class="settings-section-title-wrap">
               <span class="settings-section-badge">WEI</span>
-              <h4 class="settings-section-title">Индекс производительности Windows</h4>
+              <h4 class="settings-section-title" data-i18n="settings_wei_title">Индекс производительности Windows</h4>
             </div>
           </div>
 
@@ -798,8 +798,8 @@
             <div class="wei-score-visual">
               <div class="wei-big-score" id="wei-base-score">—</div>
               <div class="wei-score-meta">
-                <span class="wei-score-title">Базовый балл системы</span>
-                <span class="wei-score-caption">Определяется по наименьшей оценке компонента</span>
+                <span class="wei-score-title" data-i18n="wei_score_title">Базовый балл системы</span>
+                <span class="wei-score-caption" data-i18n="wei_score_caption">Определяется по наименьшей оценке компонента</span>
               </div>
             </div>
 
@@ -869,21 +869,21 @@
             <div class="settings-item-row">
               <div class="settings-item-info">
                 <span class="settings-item-label" data-i18n="settings_poll_label">Частота опроса телеметрии</span>
-                <span class="settings-item-desc">Интервал снятия показаний датчиков процессора, видеокарты и памяти</span>
+                <span class="settings-item-desc" data-i18n="settings_poll_desc">Интервал снятия показаний датчиков процессора, видеокарты и памяти</span>
               </div>
               <div class="settings-rate-selector" id="settings-rate-selector">
-                <button class="settings-rate-btn active" data-rate="1500">1.5 сек (Баланс)</button>
-                <button class="settings-rate-btn" data-rate="3000">3.0 сек (Эко)</button>
+                <button class="settings-rate-btn active" data-rate="1500" data-i18n="settings_rate_fast">1.5 сек (Баланс)</button>
+                <button class="settings-rate-btn" data-rate="3000" data-i18n="settings_rate_slow">3.0 сек (Эко)</button>
               </div>
             </div>
 
             <div class="settings-item-row">
               <div class="settings-item-info">
                 <div class="settings-item-label-wrap">
-                  <span class="settings-item-label">Игровой оверлей (In-Game HUD)</span>
+                  <span class="settings-item-label" data-i18n="settings_hud_label">Игровой оверлей (In-Game HUD)</span>
                   <span class="settings-hotkey-chip">Ctrl + Shift + O</span>
                 </div>
-                <span class="settings-item-desc">Стеклянный виджет FPS, температур и нагрузки поверх игр без риска бана и инпут-лага</span>
+                <span class="settings-item-desc" data-i18n="settings_hud_desc">Стеклянный виджет FPS, температур и нагрузки поверх игр без риска бана и инпут-лага</span>
               </div>
               <label class="toggle-switch" title="Включить игровой оверлей">
                 <input type="checkbox" id="settings-toggle-overlay" class="thecore-toggle-input">
@@ -893,14 +893,14 @@
 
             <div class="settings-item-row" id="settings-overlay-position-row">
               <div class="settings-item-info">
-                <span class="settings-item-label">Расположение оверлея на экране</span>
-                <span class="settings-item-desc">Угол отображения игрового виджета во время игры</span>
+                <span class="settings-item-label" data-i18n="settings_hud_pos_label">Расположение оверлея на экране</span>
+                <span class="settings-item-desc" data-i18n="settings_hud_pos_desc">Угол отображения игрового виджета во время игры</span>
               </div>
               <div class="settings-overlay-pos-selector" id="settings-overlay-pos-selector">
-                <button class="settings-pos-btn active" data-pos="top-right">Верх-Право</button>
-                <button class="settings-pos-btn" data-pos="top-left">Верх-Лево</button>
-                <button class="settings-pos-btn" data-pos="bottom-right">Низ-Право</button>
-                <button class="settings-pos-btn" data-pos="bottom-left">Низ-Лево</button>
+                <button class="settings-pos-btn active" data-pos="top-right" data-i18n="settings_pos_tr">Верх-Право</button>
+                <button class="settings-pos-btn" data-pos="top-left" data-i18n="settings_pos_tl">Верх-Лево</button>
+                <button class="settings-pos-btn" data-pos="bottom-right" data-i18n="settings_pos_br">Низ-Право</button>
+                <button class="settings-pos-btn" data-pos="bottom-left" data-i18n="settings_pos_bl">Низ-Лево</button>
               </div>
             </div>
           </div>
@@ -909,7 +909,7 @@
         <!-- Section 3: About & EULA Link -->
         <section class="settings-section">
           <div class="settings-section-head">
-            <h4 class="settings-section-title">О программе и разработчике</h4>
+            <h4 class="settings-section-title" data-i18n="settings_about_title">О программе и разработчике</h4>
           </div>
 
           <div class="settings-about-card">
@@ -920,8 +920,8 @@
                   <span class="settings-about-name">TheCore</span>
                   <span class="settings-about-ver">v3.3.0</span>
                 </div>
-                <span class="settings-about-author">Автор и разработчик: <strong>Theurer</strong></span>
-                <span class="settings-about-privacy">🛡️ Offline-First • Zero-Telemetry • 100% приватность</span>
+                <span class="settings-about-author" data-i18n="settings_about_author">Автор и разработчик: <strong>Theurer</strong></span>
+                <span class="settings-about-privacy" data-i18n="settings_about_privacy">🛡️ Offline-First • Zero-Telemetry • 100% приватность</span>
               </div>
             </div>
 
@@ -933,7 +933,7 @@
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
-              <span>Лицензионное соглашение</span>
+              <span data-i18n="settings_eula_link">Лицензионное соглашение</span>
             </button>
           </div>
         </section>
@@ -980,7 +980,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
-            <span>Готово</span>
+            <span data-i18n="settings_eula_done">Готово</span>
           </button>
         </div>
       </div>
@@ -1042,7 +1042,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
-        <span>Понятно</span>
+        <span data-i18n="eula_welcome_confirm">Понятно</span>
       </button>
     </div>
   </dialog>
