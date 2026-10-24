@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>TheCore HUD</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      border: none !important;
+      outline: none !important;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      color: #FFFFFF;
+      padding: 6px;
+      width: 100vw;
+      height: 100vh;
+      -webkit-app-region: no-drag;
+      pointer-events: none;
+    }
+
+    .hud-container {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: rgba(12, 16, 24, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.14), 0 8px 32px 0 rgba(0, 0, 0, 0.55);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    /* Header */
+    .hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: none !important;
+      padding-bottom: 2px;
+    }
+
+    .hud-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hud-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+      animation: hud-pulse 2s infinite;
+    }
+
+    @keyframes hud-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    .hud-brand-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #94A3B8;
+    }
+
+    .hud-hotkey-badge {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    /* Main Stats Row: FPS & GPU Temp */
+    .hud-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .hud-fps-block {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .hud-fps-val {
+      font-size: 26px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      color: #10B981;
+      line-height: 1;
+      text-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
+      letter-spacing: -0.03em;
+    }
+
+    .hud-fps-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748B;
+      letter-spacing: 0.04em;
+    }
+
+    .hud-gpu-temp-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .hud-temp-val {
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      color: #38BDF8;
+    }
+
+    .hud-temp-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+
+    /* Hardware Telemetry Grid */
+    .hud-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hud-metric-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .hud-metric-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hud-tag {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 1px 4px;
+      border-radius: 3px;
+      line-height: 1.2;
+    }
+
+    .tag-gpu { background: rgba(56, 189, 248, 0.16); color: #38BDF8; }
+    .tag-cpu { background: rgba(168, 85, 247, 0.16); color: #C084FC; }
+    .tag-ram { background: rgba(245, 158, 11, 0.16); color: #FBBF24; }
+
+    .hud-val-primary {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-weight: 700;
+      color: #F8FAFC;
+    }
+
+    .hud-val-secondary {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 10px;
+      color: #94A3B8;
+    }
+
+    /* Mini Progress Bar */
+    .hud-bar-bg {
+      width: 48px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      margin-left: 6px;
+    }
+
+    .hud-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease-out;
+    }
+
+    .fill-gpu { background: linear-gradient(90deg, #0284C7, #38BDF8); }
+    .fill-cpu { background: linear-gradient(90deg, #7E22CE, #C084FC); }
+    .fill-ram { background: linear-gradient(90deg, #D97706, #FBBF24); }
+  </style>
+</head>
+<body>
+  <div class="hud-container">
+    <!-- Header -->
+    <div class="hud-header">
+      <div class="hud-brand">
+        <div class="hud-pulse-dot"></div>
+        <span class="hud-brand-title">TheCore HUD</span>
+      </div>
+      <span class="hud-hotkey-badge">Ctrl+Shift+O</span>
+    </div>
+
+    <!-- Main Row: FPS & GPU Temp -->
+    <div class="hud-main-row">
+      <div class="hud-fps-block">
+        <span class="hud-fps-val" id="hud-fps-val">--</span>
+        <span class="hud-fps-label">FPS</span>
+      </div>
+      <div class="hud-gpu-temp-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #38BDF8;">
+          <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+        </svg>
+        <span class="hud-temp-val" id="hud-gpu-temp">--°C</span>
+        <span class="hud-temp-label">GPU</span>
+      </div>
+    </div>
+
+    <!-- Hardware Metrics -->
+    <div class="hud-grid">
+      <!-- GPU -->
+      <div class="hud-metric-row">
+        <div class="hud-metric-left">
+          <span class="hud-tag tag-gpu">GPU</span>
+          <span class="hud-val-primary" id="hud-gpu-load">0%</span>
+          <div class="hud-bar-bg"><div class="hud-bar-fill fill-gpu" id="hud-gpu-bar" style="width: 0%;"></div></div>
+        </div>
+        <span class="hud-val-secondary" id="hud-gpu-sub">-- W</span>
+      </div>
+
+      <!-- CPU -->
+      <div class="hud-metric-row">
+        <div class="hud-metric-left">
+          <span class="hud-tag tag-cpu">CPU</span>
+          <span class="hud-val-primary" id="hud-cpu-load">0%</span>
+          <div class="hud-bar-bg"><div class="hud-bar-fill fill-cpu" id="hud-cpu-bar" style="width: 0%;"></div></div>
+        </div>
+        <span class="hud-val-secondary" id="hud-cpu-sub">--</span>
+      </div>
+
+      <!-- RAM -->
+      <div class="hud-metric-row">
+        <div class="hud-metric-left">
+          <span class="hud-tag tag-ram">RAM</span>
+          <span class="hud-val-primary" id="hud-ram-load">0%</span>
+          <div class="hud-bar-bg"><div class="hud-bar-fill fill-ram" id="hud-ram-bar" style="width: 0%;"></div></div>
+        </div>
+        <span class="hud-val-secondary" id="hud-ram-sub">-- / -- GB</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Real-time FPS measurement via requestAnimationFrame frame deltas
+    let frameCount = 0;
+    let lastTime = performance.now();
+    const hudFpsVal = document.getElementById('hud-fps-val');
+    const hudGpuTemp = document.getElementById('hud-gpu-temp');
+    const hudGpuLoad = document.getElementById('hud-gpu-load');
+    const hudGpuBar = document.getElementById('hud-gpu-bar');
+    const hudGpuSub = document.getElementById('hud-gpu-sub');
+    const hudCpuLoad = document.getElementById('hud-cpu-load');
+    const hudCpuBar = document.getElementById('hud-cpu-bar');
+    const hudCpuSub = document.getElementById('hud-cpu-sub');
+    const hudRamLoad = document.getElementById('hud-ram-load');
+    const hudRamBar = document.getElementById('hud-ram-bar');
+    const hudRamSub = document.getElementById('hud-ram-sub');
+
+    function calcFps(now) {
+      frameCount++;
+      const delta = now - lastTime;
+      if (delta >= 400) {
+        const fps = Math.round((frameCount * 1000) / delta);
+        if (hudFpsVal) {
+          hudFpsVal.textContent = fps;
+          if (fps >= 60) {
+            hudFpsVal.style.color = '#10B981';
+            hudFpsVal.style.textShadow = '0 0 16px rgba(16, 185, 129, 0.45)';
+          } else if (fps >= 30) {
+            hudFpsVal.style.color = '#FBBF24';
+            hudFpsVal.style.textShadow = '0 0 16px rgba(251, 191, 36, 0.45)';
+          } else {
+            hudFpsVal.style.color = '#F43F5E';
+            hudFpsVal.style.textShadow = '0 0 16px rgba(244, 63, 94, 0.45)';
+          }
+        }
+        frameCount = 0;
+        lastTime = now;
+      }
+      requestAnimationFrame(calcFps);
+    }
+    requestAnimationFrame(calcFps);
+
+    // Listen for telemetry updates from Electron main process
+    if (window.electronAPI) {
+      window.electronAPI.onTelemetryUpdate((data) => {
+        if (!data) return;
+
+        // GPU
+        if (data.gpu_temp_c !== undefined) {
+          const temp = Math.round(data.gpu_temp_c);
+          hudGpuTemp.textContent = `${temp}°C`;
+          if (temp >= 82) {
+            hudGpuTemp.style.color = '#F43F5E';
+          } else if (temp >= 72) {
+            hudGpuTemp.style.color = '#FBBF24';
+          } else {
+            hudGpuTemp.style.color = '#38BDF8';
+          }
+        }
+        if (data.gpu_util_pct !== undefined) {
+          const gLoad = Math.min(100, Math.max(0, Math.round(data.gpu_util_pct)));
+          hudGpuLoad.textContent = `${gLoad}%`;
+          hudGpuBar.style.width = `${gLoad}%`;
+        }
+        if (data.gpu_power_w !== undefined) {
+          hudGpuSub.textContent = `${Math.round(data.gpu_power_w)} W`;
+        }
+
+        // CPU
+        if (data.cpu_percent !== undefined) {
+          const cLoad = Math.min(100, Math.max(0, Math.round(data.cpu_percent)));
+          hudCpuLoad.textContent = `${cLoad}%`;
+          hudCpuBar.style.width = `${cLoad}%`;
+        }
+        if (data.cpu_clock_mhz) {
+          hudCpuSub.textContent = `${(data.cpu_clock_mhz / 1000).toFixed(1)} GHz`;
+        }
+
+        // RAM
+        if (data.ram_percent !== undefined) {
+          const rLoad = Math.min(100, Math.max(0, Math.round(data.ram_percent)));
+          hudRamLoad.textContent = `${rLoad}%`;
+          hudRamBar.style.width = `${rLoad}%`;
+        }
+        if (data.ram_used_gb !== undefined && data.ram_total_gb !== undefined) {
+          hudRamSub.textContent = `${Number(data.ram_used_gb).toFixed(1)} / ${Math.round(data.ram_total_gb)} GB`;
+        }
+      });
+    }
+  </script>
+</body>
+</html>

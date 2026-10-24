@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>TheCore — Precision Speed Gauge</title>
+  <defs>
+    <linearGradient id="c2TrackGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+    <linearGradient id="c2PeakGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="c2ChevronGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="none" />
+  
+  <!-- Main High-Speed Tachometer Gauge -->
+  <path d="M 110.34 401.66 A 206 206 0 1 1 442.70 343.06 A 40.0 40.0 0 0 1 370.19 309.25 A 126 126 0 1 0 166.90 345.10 A 40.0 40.0 0 0 1 110.34 401.66 Z" fill="url(#c2TrackGrad)" />
+
+  <!-- Optimal Green Peak Sector -->
+  <path d="M 413.81 388.41 A 206 206 0 0 1 238.05 461.22 A 40.0 40.0 0 0 1 245.02 381.52 A 126 126 0 0 0 352.52 336.99 A 40.0 40.0 0 0 1 413.81 388.41 Z" fill="url(#c2PeakGrad)" />
+
+  <!-- Upward Hardware Boost Vector -->
+  <path d="M 256 186 L 316 280 C 318 284 314 290 308 288 L 256 262 L 204 288 C 198 290 194 284 196 280 Z" fill="url(#c2ChevronGrad)" />
+</svg>

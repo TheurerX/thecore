@@ -1,0 +1,67 @@
+{
+  "name": "thecore",
+  "productName": "TheCore",
+  "version": "3.3.0",
+  "description": "System monitor and cleaner for Windows.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "node scripts/build-protected.js",
+    "build:setup": "node scripts/build-protected.js",
+    "build:raw": "electron-builder --win nsis",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "thecore",
+    "theurer",
+    "electron",
+    "hardware-monitor",
+    "system-core",
+    "windows-cleaner"
+  ],
+  "author": "Theurer",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^34.5.8",
+    "electron-builder": "^26.15.3",
+    "javascript-obfuscator": "^5.9.0"
+  },
+  "build": {
+    "appId": "com.theurer.thecore",
+    "productName": "TheCore",
+    "executableName": "TheCore",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/logo.ico",
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "include": "installer.nsh",
+      "artifactName": "${productName}.exe"
+    }
+  }
+}

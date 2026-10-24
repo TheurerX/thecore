@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>TheCore — Android Safe Zone Icon</title>
+  <defs>
+    <!-- Background Gradient for Android Launcher Tile -->
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#141922" />
+      <stop offset="70%" stop-color="#090B0E" />
+      <stop offset="100%" stop-color="#050709" />
+    </radialGradient>
+    <!-- Center Chip: Deep Obsidian Slate Glass -->
+    <linearGradient id="c2Chip" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <!-- Top-Left: CPU (Warm Amber / Gold) -->
+    <linearGradient id="c2Cpu" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <!-- Top-Right: GPU (Neon Emerald) -->
+    <linearGradient id="c2Gpu" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <!-- Bottom-Right: Displays / PSU (High-Voltage Rose) -->
+    <linearGradient id="c2Rose" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB7185" />
+      <stop offset="100%" stop-color="#E11D48" />
+    </linearGradient>
+    <!-- Bottom-Left: RAM (Deep Royal Violet) -->
+    <linearGradient id="c2Ram" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA" />
+      <stop offset="100%" stop-color="#6D28D9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Obsidian Canvas Tile -->
+  <rect width="512" height="512" fill="url(#bgGlow)" rx="112" />
+
+  <!-- Inner Safe Zone Group (Scaled to 68% around center 256, 256) -->
+  <g transform="translate(256, 256) scale(0.68) translate(-256, -256)">
+    <!-- Top-Left Wing: CPU (Amber) -->
+    <path d="M 76 228 C 84 144 144 84 228 76 L 228 140 C 180 146 146 180 140 228 Z" fill="url(#c2Cpu)" />
+
+    <!-- Top-Right Wing: GPU (Emerald) -->
+    <path d="M 284 76 C 368 84 428 144 436 228 L 372 228 C 366 180 332 146 284 140 Z" fill="url(#c2Gpu)" />
+
+    <!-- Bottom-Right Wing: Displays/PSU (Rose) -->
+    <path d="M 436 284 C 428 368 368 428 284 436 L 284 372 C 332 366 366 332 372 284 Z" fill="url(#c2Rose)" />
+
+    <!-- Bottom-Left Wing: RAM (Violet) -->
+    <path d="M 228 436 C 144 428 84 368 76 284 L 140 284 C 146 332 180 366 228 372 Z" fill="url(#c2Ram)" />
+
+    <!-- Center Silicon Processor Hub -->
+    <rect x="196" y="196" width="120" height="120" rx="28" fill="url(#c2Chip)" />
+    <circle cx="256" cy="256" r="24" fill="#38BDF8" />
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+node_modules/
+dist/
+build/
+bin/
+engine.spec
+
+# Internal agent context & backlog
+GEMINI.md
+IDEAS.md
+

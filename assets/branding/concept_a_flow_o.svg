@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>TheCore — Kinetic Flow O</title>
+  <defs>
+    <linearGradient id="c1GradA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="c1GradB" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="none" />
+  <path d="M 422.66 377.08 A 206 206 0 0 1 67.81 172.21 A 46.0 46.0 0 0 1 151.86 209.63 A 114 114 0 0 0 348.23 323.01 A 46.0 46.0 0 0 1 422.66 377.08 Z" fill="url(#c1GradA)" />
+  <path d="M 89.34 134.92 A 206 206 0 0 1 444.19 339.79 A 46.0 46.0 0 0 1 360.14 302.37 A 114 114 0 0 0 163.77 188.99 A 46.0 46.0 0 0 1 89.34 134.92 Z" fill="url(#c1GradB)" />
+</svg>

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TheCore</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/tray-icon.png">
+  <link rel="icon" type="image/svg+xml" href="../assets/logo-android.svg">
+  <link rel="apple-touch-icon" href="../assets/logo-android.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Frameless Draggable Titlebar Header -->
+  <header class="titlebar">
+    <!-- Brand -->
+    <div class="titlebar-brand no-drag">
+      <img src="../assets/logo.png" alt="TheCore Logo" class="brand-logo">
+      <span class="brand-title">TheCore</span>
+      <span class="brand-ver">v3.3.0</span>
+    </div>
+
+    <!-- Navigation Tabs (Instant 0ms Switching) -->
+    <nav class="titlebar-nav no-drag" aria-label="Разделы приложения">
+      <button class="nav-item active" data-view="dashboard" id="nav-btn-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
+        </svg>
+        <span>Обзор системы</span>
+      </button>
+
+      <button class="nav-item" data-view="optimize" id="nav-btn-optimize">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 14 4-4"/>
+          <path d="M3.34 19a10 10 0 1 1 17.32 0"/>
+          <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+        </svg>
+        <span>Оптимизация</span>
+      </button>
+
+      <button class="nav-item" data-view="uninstaller" id="nav-btn-uninstaller">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        <span>Деинсталлятор</span>
+      </button>
+
+      <button class="nav-item" data-view="startup" id="nav-btn-startup">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+        </svg>
+        <span>Автозагрузка</span>
+      </button>
+
+      <button class="nav-item" data-view="upgrade" id="nav-btn-upgrade">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>
+        </svg>
+        <span>Советник по апгрейду</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions (Live Telemetry Chip, Boost Button, Window Controls) -->
+    <div class="titlebar-actions no-drag">
+      <div class="telemetry-chip">
+        <span>CPU: <strong id="top-cpu-metric">--%</strong></span>
+        <span>•</span>
+        <span>RAM: <strong id="top-ram-metric">--%</strong></span>
+      </div>
+
+      <button class="header-boost-btn" id="top-boost-btn" title="Очистить память и кэш">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 14 4-4"/>
+          <path d="M3.34 19a10 10 0 1 1 17.32 0"/>
+          <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+        </svg>
+        <span>Ускорить</span>
+      </button>
+
+      <!-- Settings & Rating Gear Button -->
+      <button class="header-settings-btn" id="top-settings-btn" title="Параметры и оценка системы">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+
+      <div class="window-controls">
+        <button class="win-btn" id="win-min-btn" title="Свернуть">
+          <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="12" x2="20" y2="12"/></svg>
+        </button>
+        <button class="win-btn close-btn" id="win-close-btn" title="Закрыть">
+          <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Viewport Panels Container -->
+  <main class="app-viewport">
+
+    <!-- 1. DASHBOARD VIEW (ОБЗОР СИСТЕМЫ) -->
+    <section class="view-panel active" id="view-dashboard">
+      <div class="dashboard-grid">
+
+        <!-- CPU Card -->
+        <article class="glass-card card-cpu" id="dash-card-cpu">
+          <div>
+            <div class="card-head">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/></svg>
+                </div>
+                <span class="card-title">Процессор (CPU)</span>
+              </div>
+              <button class="card-detail-btn" data-detail="cpu">Детали</button>
+            </div>
+            <div class="card-main-name" id="cpu-name">Загрузка данных...</div>
+            <div class="metric-bar-group">
+              <div class="metric-bar-labels">
+                <span>Загрузка ядер</span>
+                <strong id="cpu-usage-val">0%</strong>
+              </div>
+              <div class="metric-progress-bg">
+                <div class="metric-progress-fill" id="cpu-usage-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-specs-grid">
+            <div class="spec-cell"><span class="spec-k">Сокет</span> <strong class="spec-v" id="cpu-socket">AM4</strong></div>
+            <div class="spec-cell"><span class="spec-k">Ядра / Потоки</span> <strong class="spec-v" id="cpu-cores">6 / 12</strong></div>
+            <div class="spec-cell"><span class="spec-k">Базовая частота</span> <strong class="spec-v" id="cpu-clock">3801 МГц</strong></div>
+            <div class="spec-cell"><span class="spec-k">Кэш L2 / L3</span> <strong class="spec-v" id="cpu-cache">3 МБ / 32 МБ</strong></div>
+            <div class="spec-cell"><span class="spec-k">Архитектура</span> <strong class="spec-v" id="cpu-arch">x64 (Zen 2)</strong></div>
+            <div class="spec-cell"><span class="spec-k">Расчетный TDP</span> <strong class="spec-v" id="cpu-tdp">95 Вт</strong></div>
+          </div>
+        </article>
+
+        <!-- GPU Card -->
+        <article class="glass-card card-gpu" id="dash-card-gpu">
+          <div>
+            <div class="card-head">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>
+                </div>
+                <span class="card-title">Видеокарта (GPU)</span>
+              </div>
+              <button class="card-detail-btn" data-detail="gpu">Детали</button>
+            </div>
+            <div class="card-main-name" id="gpu-name">Загрузка данных...</div>
+            <div class="metric-bar-group">
+              <div class="metric-bar-labels">
+                <span>Температура & Энергия</span>
+                <strong id="gpu-temp-val">-- °C</strong>
+              </div>
+              <div class="metric-progress-bg">
+                <div class="metric-progress-fill fill-emerald" id="gpu-temp-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-specs-grid">
+            <div class="spec-cell"><span class="spec-k">Видеопамять</span> <strong class="spec-v" id="gpu-vram">8 ГБ GDDR6</strong></div>
+            <div class="spec-cell"><span class="spec-k">Интерфейс шины</span> <strong class="spec-v" id="gpu-bus">PCIe 4.0 x16</strong></div>
+            <div class="spec-cell"><span class="spec-k">Версия драйвера</span> <strong class="spec-v" id="gpu-driver">610.88</strong></div>
+            <div class="spec-cell"><span class="spec-k">Энергопотребление</span> <strong class="spec-v" id="gpu-power">-- Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k">Охлаждение</span> <strong class="spec-v" id="gpu-fan">0% (Fan Stop)</strong></div>
+            <div class="spec-cell"><span class="spec-k">Разрешение</span> <strong class="spec-v" id="gpu-disp">2560x1440 @ 165 Гц</strong></div>
+          </div>
+        </article>
+
+        <!-- RAM Card -->
+        <article class="glass-card card-ram" id="dash-card-ram">
+          <div>
+            <div class="card-head">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><path d="M6 19v-3"/><path d="M10 19v-3"/><path d="M14 19v-3"/><path d="M18 19v-3"/><rect x="2" y="5" width="20" height="11" rx="2"/><path d="M6 5V3"/><path d="M18 5V3"/></svg>
+                </div>
+                <span class="card-title">Оперативная память</span>
+              </div>
+              <button class="card-detail-btn" data-detail="ram">Детали</button>
+            </div>
+            <div class="card-main-name" id="ram-name">Загрузка данных...</div>
+            <div class="metric-bar-group">
+              <div class="metric-bar-labels">
+                <span>Использование RAM</span>
+                <strong id="ram-usage-val">-- / -- ГБ</strong>
+              </div>
+              <div class="metric-progress-bg">
+                <div class="metric-progress-fill fill-purple" id="ram-usage-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-specs-grid">
+            <div class="spec-cell"><span class="spec-k">Частота памяти</span> <strong class="spec-v" id="ram-speed">3200 МГц</strong></div>
+            <div class="spec-cell"><span class="spec-k">Профиль DOCP</span> <strong class="spec-v" id="ram-xmp">Активен</strong></div>
+            <div class="spec-cell"><span class="spec-k">Конфигурация</span> <strong class="spec-v" id="ram-modules">2 из 4 (A2/B2)</strong></div>
+            <div class="spec-cell"><span class="spec-k">Режим шины</span> <strong class="spec-v" id="ram-channel">Dual-Channel</strong></div>
+            <div class="spec-cell"><span class="spec-k">Маркировка</span> <strong class="spec-v" id="ram-parts">Kingston KF3200</strong></div>
+            <div class="spec-cell"><span class="spec-k">Доступно памяти</span> <strong class="spec-v" id="ram-avail">-- ГБ</strong></div>
+          </div>
+        </article>
+
+        <!-- Storage Card -->
+        <article class="glass-card card-storage" id="dash-card-storage">
+          <div>
+            <div class="card-head">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" x2="6.01" y1="16" y2="16"/><line x1="10" x2="10.01" y1="16" y2="16"/></svg>
+                </div>
+                <span class="card-title">Накопители (SSD/HDD)</span>
+              </div>
+              <button class="card-detail-btn" data-detail="storage">Детали</button>
+            </div>
+            <div class="card-main-name" id="storage-name">Загрузка данных...</div>
+            
+            <!-- Multi-drive Mini Progress Bars -->
+            <div class="storage-mini-container" id="storage-drives-list">
+              <!-- Populated dynamically with C:, E:, D: -->
+            </div>
+          </div>
+
+          <div class="card-specs-grid">
+            <div class="spec-cell"><span class="spec-k">Системный диск</span> <strong class="spec-v" id="storage-sys-disk">C: (NVMe SSD)</strong></div>
+            <div class="spec-cell"><span class="spec-k">Всего накопителей</span> <strong class="spec-v" id="storage-count">3 шт.</strong></div>
+            <div class="spec-cell span-2"><span class="spec-k">Общий объем</span> <strong class="spec-v" id="storage-total-cap">1.63 ТБ</strong></div>
+            <div class="spec-cell span-2"><span class="spec-k">Типы шины</span> <strong class="spec-v" id="storage-bus">NVMe PCIe + SATA</strong></div>
+          </div>
+        </article>
+
+        <!-- Motherboard Card -->
+        <article class="glass-card card-mobo" id="dash-card-mobo">
+          <div>
+            <div class="card-head">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M11 9h4a2 2 0 0 0 2-2V3"/><circle cx="9" cy="9" r="2"/><path d="M7 21v-4a2 2 0 0 1 2-2h4"/><circle cx="15" cy="15" r="2"/></svg>
+                </div>
+                <span class="card-title">Материнская плата</span>
+              </div>
+              <button class="card-detail-btn" data-detail="mobo">Детали</button>
+            </div>
+            <div class="card-main-name" id="mobo-name">Загрузка данных...</div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">
+              Системная платформа с поддержкой высокоскоростных интерфейсов PCIe 4.0 и разгона памяти DOCP.
+            </p>
+          </div>
+
+          <div class="card-specs-grid">
+            <div class="spec-cell"><span class="spec-k">Производитель</span> <strong class="spec-v" id="mobo-mfg">ASUSTeK</strong></div>
+            <div class="spec-cell"><span class="spec-k">Чипсет платы</span> <strong class="spec-v" id="mobo-chipset">AMD B550</strong></div>
+            <div class="spec-cell"><span class="spec-k">Версия BIOS</span> <strong class="spec-v" id="mobo-bios">2403</strong></div>
+            <div class="spec-cell"><span class="spec-k">Дата BIOS</span> <strong class="spec-v" id="mobo-date">16.06.2021</strong></div>
+            <div class="spec-cell"><span class="spec-k">Сокет процессора</span> <strong class="spec-v" id="mobo-socket">Socket AM4</strong></div>
+            <div class="spec-cell"><span class="spec-k">Шина PCIe</span> <strong class="spec-v" id="mobo-pcie">PCIe Gen 4 Ready</strong></div>
+          </div>
+        </article>
+
+        <!-- Displays & PSU Card -->
+        <article class="glass-card card-displays" id="dash-card-displays">
+          <div>
+            <div class="card-head">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#F43F5E" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+                </div>
+                <span class="card-title">Дисплеи и Питание</span>
+              </div>
+              <button class="card-detail-btn" data-detail="psu">Детали</button>
+            </div>
+            <div class="card-main-name" id="display-name">Основной монитор: --</div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">
+              Расчет пикового энергопотребления системы при полной синхронной нагрузке на CPU и GPU.
+            </p>
+          </div>
+
+          <div class="card-specs-grid">
+            <div class="spec-cell"><span class="spec-k">Монитор</span> <strong class="spec-v" id="disp-model">Gigabyte GS27QC</strong></div>
+            <div class="spec-cell"><span class="spec-k">Режим работы</span> <strong class="spec-v" id="disp-mode">2560x1440 @ 165 Гц</strong></div>
+            <div class="spec-cell"><span class="spec-k">Нагрузка CPU/GPU</span> <strong class="spec-v" id="psu-breakdown">95 Вт / 220 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k">Пиковое потребление</span> <strong class="spec-v" id="psu-draw">375 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k">Рекомендуемый БП</span> <strong class="spec-v" id="psu-rec">600–650 Вт</strong></div>
+            <div class="spec-cell"><span class="spec-k">Сертификат БП</span> <strong class="spec-v" id="psu-cert">80 PLUS Gold</strong></div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 2. OPTIMIZATION VIEW -->
+    <section class="view-panel" id="view-optimize">
+      <div class="optimize-container">
+        
+        <!-- Hero Header & Control Card -->
+        <div class="glass-card optimize-hero-card">
+          <div class="opt-hero-content">
+            <div class="opt-hero-left">
+              <div class="opt-status-badge-row">
+                <span class="opt-badge" id="opt-health-badge">Экспресс-аудит</span>
+                <span class="opt-badge-sub" id="opt-health-text">Оценка состояния системы</span>
+                <span class="opt-auto-pulse-chip">
+                  <span class="opt-pulse-dot"></span>
+                  Автоматический мониторинг
+                </span>
+              </div>
+              <h2 class="opt-hero-title" id="opt-hero-title">Анализ ресурсов системы...</h2>
+              <p class="opt-hero-desc" id="opt-hero-desc">
+                Сканирование оперативной памяти, временных файлов, кэша шейдеров и фоновых приложений.
+              </p>
+            </div>
+          </div>
+
+          <!-- Optimization Progress (Hidden during idle, active during run) -->
+          <div class="optimize-progress-section" id="opt-progress-section" style="display: none;">
+            <div class="optimize-progress-wrapper">
+              <div class="optimize-progress-bar">
+                <div class="optimize-progress-fill" id="opt-progress-fill"></div>
+              </div>
+            </div>
+
+            <div class="optimize-steps-list">
+              <div class="step-item" id="opt-step-1">
+                <div class="step-icon">1</div>
+                <span>Фоновые лаунчеры</span>
+              </div>
+              <div class="step-item" id="opt-step-2">
+                <div class="step-icon">2</div>
+                <span>Кэш памяти RAM</span>
+              </div>
+              <div class="step-item" id="opt-step-3">
+                <div class="step-icon">3</div>
+                <span>Файлы %TEMP%</span>
+              </div>
+              <div class="step-item" id="opt-step-4">
+                <div class="step-icon">4</div>
+                <span>Шейдеры GPU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Halftone Pre-Scan Cards Grid -->
+        <div class="opt-analysis-grid">
+          
+          <!-- Card 1: RAM Cache -->
+          <article class="glass-card opt-card opt-card-ram">
+            <div class="opt-card-head">
+              <div class="opt-card-title-group">
+                <div class="opt-card-icon ram-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="6" y1="9" x2="6" y2="15"/>
+                    <line x1="10" y1="9" x2="10" y2="15"/>
+                    <line x1="14" y1="9" x2="14" y2="15"/>
+                    <line x1="18" y1="9" x2="18" y2="15"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="opt-card-title">Оперативная память</h3>
+                  <span class="opt-card-subtitle">Кэш и рабочий набор</span>
+                </div>
+              </div>
+              <span class="opt-card-badge ram-badge" id="opt-badge-ram">EmptyWorkingSet</span>
+            </div>
+
+            <div class="opt-stat-value-group">
+              <div class="opt-stat-main" id="opt-val-ram-cleanable">-- МБ</div>
+              <div class="opt-stat-caption">потенциал сброса кэша RAM</div>
+            </div>
+
+            <div class="opt-card-details">
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Текущая загрузка:</span>
+                <strong class="opt-detail-v" id="opt-val-ram-now">--% (-- / -- ГБ)</strong>
+              </div>
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Метод оптимизации:</span>
+                <span class="opt-detail-v">Очистка страниц Win32 API</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2: System Temp Junk -->
+          <article class="glass-card opt-card opt-card-temp">
+            <div class="opt-card-head">
+              <div class="opt-card-title-group">
+                <div class="opt-card-icon temp-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="opt-card-title">Системный мусор</h3>
+                  <span class="opt-card-subtitle">Каталог %TEMP%</span>
+                </div>
+              </div>
+              <span class="opt-card-badge temp-badge" id="opt-badge-temp">Временные файлы</span>
+            </div>
+
+            <div class="opt-stat-value-group">
+              <div class="opt-stat-main" id="opt-val-temp-size">-- МБ</div>
+              <div class="opt-stat-caption">накоплено временных файлов</div>
+            </div>
+
+            <div class="opt-card-details">
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Количество файлов:</span>
+                <strong class="opt-detail-v" id="opt-val-temp-count">-- шт.</strong>
+              </div>
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Безопасность:</span>
+                <span class="opt-detail-v">Пропуск заблокированных</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3: GPU Shader Cache -->
+          <article class="glass-card opt-card opt-card-shader">
+            <div class="opt-card-head">
+              <div class="opt-card-title-group">
+                <div class="opt-card-icon shader-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                    <polyline points="2 17 12 22 22 17"/>
+                    <polyline points="2 12 12 17 22 12"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="opt-card-title">Кэш шейдеров GPU</h3>
+                  <span class="opt-card-subtitle">DirectX / Vulkan / NVIDIA / AMD</span>
+                </div>
+              </div>
+              <span class="opt-card-badge shader-badge" id="opt-badge-shader">GPU Shaders</span>
+            </div>
+
+            <div class="opt-stat-value-group">
+              <div class="opt-stat-main" id="opt-val-shader-size">-- МБ</div>
+              <div class="opt-stat-caption">размер дискового кэша шейдеров</div>
+            </div>
+
+            <div class="opt-card-details">
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Файлов шейдеров:</span>
+                <strong class="opt-detail-v" id="opt-val-shader-count">-- шт.</strong>
+              </div>
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Влияние:</span>
+                <span class="opt-detail-v">Устранение статтеров игр</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 4: Target Background Apps -->
+          <article class="glass-card opt-card opt-card-apps">
+            <div class="opt-card-head">
+              <div class="opt-card-title-group">
+                <div class="opt-card-icon apps-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="opt-card-title">Фоновые клиенты</h3>
+                  <span class="opt-card-subtitle">Лаунчеры и авто-апдейтеры</span>
+                </div>
+              </div>
+              <span class="opt-card-badge apps-badge" id="opt-badge-apps">0 активно</span>
+            </div>
+
+            <div class="opt-stat-value-group">
+              <div class="opt-stat-main" id="opt-val-apps-mem">-- МБ</div>
+              <div class="opt-stat-caption">потребляют активные клиенты</div>
+            </div>
+
+            <div class="opt-card-details">
+              <div class="opt-detail-row">
+                <span class="opt-detail-k">Найдено процессов:</span>
+                <strong class="opt-detail-v" id="opt-val-apps-count">0 шт.</strong>
+              </div>
+              <div class="opt-apps-tags" id="opt-apps-tags-list">
+                <!-- Badges populated dynamically -->
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Results Summary Grid -->
+        <div class="optimize-results-grid" id="opt-results-section" style="display: none;">
+          <div class="glass-card res-stat-card">
+            <div class="res-stat-val" id="res-ram-freed">0 МБ</div>
+            <div class="res-stat-label">Освобождено RAM</div>
+          </div>
+          <div class="glass-card res-stat-card">
+            <div class="res-stat-val" id="res-temp-freed">0 МБ</div>
+            <div class="res-stat-label">Очищено кэша и %TEMP%</div>
+          </div>
+          <div class="glass-card res-stat-card">
+            <div class="res-stat-val" id="res-proc-closed">0</div>
+            <div class="res-stat-label">Выгружено процессов</div>
+          </div>
+          <div class="glass-card res-stat-card">
+            <div class="res-stat-val" id="res-current-ram">0%</div>
+            <div class="res-stat-label">Текущая загрузка RAM</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. CLEAN UNINSTALLER VIEW -->
+    <section class="view-panel" id="view-uninstaller">
+      <div class="uninstaller-container">
+        
+        <!-- Hero Header & Filter Bar -->
+        <div class="glass-card uninstaller-hero-card">
+          <div class="uninstaller-hero-top">
+            <div class="uninstaller-hero-left">
+              <div class="uninstaller-badges-row">
+                <span class="opt-badge uninstaller-badge-cat">Менеджер программ</span>
+              </div>
+              <h2 class="uninstaller-hero-title">Установленные приложения</h2>
+              <p class="uninstaller-hero-desc" id="uninstaller-hero-stats">
+                Сканирование реестра и хранилища Windows...
+              </p>
+            </div>
+
+            <!-- Search input in Liquid Glass -->
+            <div class="uninstaller-search-wrapper">
+              <div class="uninstaller-search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="uninstaller-search-input" placeholder="Поиск по названию или издателю..." spellcheck="false" autocomplete="off">
+                <button class="search-clear-btn" id="uninstaller-search-clear" title="Очистить поиск" style="display: none;">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter & Category Bar (Liquid Pills with Pure SVG Icons) -->
+          <div class="uninstaller-toolbar">
+            <div class="uninstaller-pills-group" id="uninstaller-category-filters">
+              <button class="liquid-pill active" data-filter="all">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
+                </svg>
+                <span>Все</span> (<span id="count-all">0</span>)
+              </button>
+
+              <button class="liquid-pill" data-filter="game">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/>
+                  <line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/>
+                  <rect width="20" height="12" x="2" y="6" rx="6"/>
+                </svg>
+                <span>Игры</span> (<span id="count-game">0</span>)
+              </button>
+
+              <button class="liquid-pill" data-filter="junk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                  <line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+                </svg>
+                <span>Мусорные</span> (<span id="count-junk">0</span>)
+              </button>
+
+              <button class="liquid-pill" data-filter="app">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+                </svg>
+                <span>Программы</span> (<span id="count-app">0</span>)
+              </button>
+
+              <button class="liquid-pill" data-filter="system">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/>
+                  <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>
+                </svg>
+                <span>Система</span> (<span id="count-system">0</span>)
+              </button>
+            </div>
+
+            <div class="uninstaller-sort-group">
+              <span class="sort-label">Сортировка:</span>
+              <div class="uninstaller-pills-group" id="uninstaller-sort-filters">
+                <button class="liquid-pill active" data-sort="size">По размеру</button>
+                <button class="liquid-pill" data-sort="name">По имени</button>
+                <button class="liquid-pill" data-sort="date">По дате</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Apps List Container -->
+        <div class="apps-list-container" id="apps-list-container">
+          <div class="apps-loading-state" id="apps-loading-state">
+            <div class="apps-spinner"></div>
+            <span>Поиск и расчёт размера установленных приложений...</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. STARTUP MANAGER VIEW (ТОЛЬКО ВКЛЮЧЁННЫЕ) -->
+    <section class="view-panel" id="view-startup">
+      <div class="startup-container">
+        <div class="glass-card startup-header-bar">
+          <div>
+            <h3 style="font-size: 14.5px; font-weight: 600; color: #FFFFFF;">Активные программы в автозагрузке Windows</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+              Отображаются только те процессы, которые сейчас реально включены и запускаются при старте Windows.
+            </p>
+          </div>
+          <div class="startup-stats-summary" id="startup-stats-text">
+            Активных процессов: <strong style="color: #10B981;">--</strong>
+          </div>
+        </div>
+
+        <!-- TheCore Permanent Autostart Card (Always Visible) -->
+        <div class="startup-card thecore-startup-card" id="thecore-startup-card">
+          <div class="startup-card-left">
+            <div class="startup-title-row">
+              <span class="startup-name thecore-brand-title">
+                <img src="../assets/logo.png" alt="Logo" class="thecore-inline-logo">
+                TheCore
+              </span>
+              <span class="startup-location-tag thecore-tag">Фоновый режим</span>
+            </div>
+            <div class="startup-badges-row">
+              <span class="startup-chip impact-low">
+                <span class="chip-dot"></span>
+                Низкое влияние (~0.05 сек)
+              </span>
+              <span class="startup-chip rec-safe">
+                Рекомендуется
+              </span>
+            </div>
+            <div class="startup-desc">
+              Бесшумный запуск в системный трей при включении Windows для непрерывного мониторинга датчиков и мгновенной оптимизации.
+            </div>
+            <div class="startup-cmd" title="TheCore.exe --hidden">TheCore.exe --hidden</div>
+          </div>
+          <div class="startup-card-right">
+            <label class="toggle-switch" title="Включить / Отключить автозапуск TheCore">
+              <input type="checkbox" id="thecore-autostart-toggle" class="thecore-toggle-input">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="startup-list" id="startup-items-list">
+          <!-- Populated dynamically with enabled-only items -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. UPGRADE ADVISOR VIEW -->
+    <section class="view-panel" id="view-upgrade">
+      <div class="upgrade-container">
+        <!-- Free Boost Banner -->
+        <div class="free-boost-banner" id="free-boost-card" style="display: none;">
+          <div class="free-boost-header">
+            <h3 class="free-boost-title">⚡ БЕСПЛАТНЫЙ БУСТ: Включить XMP / DOCP в BIOS</h3>
+            <span class="free-boost-badge">0 РУБ. • МАКСИМАЛЬНАЯ ВЫГОДА</span>
+          </div>
+          <p id="free-boost-desc" style="font-size: 13px; color: #E2E8F0;"></p>
+          <div class="free-boost-guide" id="free-boost-guide"></div>
+        </div>
+
+        <div class="upgrade-grid" id="upgrade-recommendations-list">
+          <!-- Populated dynamically by renderer.js -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- Component Detail Inspection Dialog -->
+  <dialog id="details-dialog" aria-labelledby="detailDialogTitle">
+    <div class="modal-header">
+      <h3 class="modal-title" id="detailDialogTitle">Спецификация компонента</h3>
+      <button class="card-detail-btn" id="detail-close-btn">✕</button>
+    </div>
+    <div class="modal-body" id="detailDialogBody">
+      Загрузка...
+    </div>
+  </dialog>
+
+  <!-- Residuals Deep Clean Dialog -->
+  <dialog id="residuals-dialog" aria-labelledby="residualsDialogTitle">
+    <div class="modal-header residuals-modal-header">
+      <div class="residuals-modal-title-wrap">
+        <h3 class="modal-title" id="residualsDialogTitle">Найденные остатки</h3>
+        <span class="residuals-modal-sub" id="res-target-app-name">Приложение</span>
+      </div>
+      <button class="modal-close-icon-btn" id="residuals-close-btn" title="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body residuals-modal-body">
+      <!-- Residuals Stats Ribbon -->
+      <div class="residuals-stats-ribbon">
+        <div class="residuals-stat-card">
+          <span class="res-stat-mini-val" id="res-found-size">0 МБ</span>
+          <span class="res-stat-mini-lbl">Мусора на диске</span>
+        </div>
+        <div class="residuals-stat-card">
+          <span class="res-stat-mini-val" id="res-found-files">0</span>
+          <span class="res-stat-mini-lbl">Папок и файлов</span>
+        </div>
+        <div class="residuals-stat-card">
+          <span class="res-stat-mini-val" id="res-found-reg">0</span>
+          <span class="res-stat-mini-lbl">Записей реестра</span>
+        </div>
+      </div>
+
+      <!-- Residual Items Tree / List -->
+      <div class="residuals-list-header">
+        <span>Обнаруженные остаточные элементы:</span>
+        <button class="residuals-select-all-btn" id="residuals-toggle-all">Снять выбор</button>
+      </div>
+
+      <div class="residuals-items-tree" id="residuals-items-tree">
+        <!-- Populated dynamically with checkboxes -->
+      </div>
+    </div>
+
+    <div class="residuals-modal-footer">
+      <button class="residuals-btn-cancel" id="residuals-btn-cancel">Пропустить</button>
+      <button class="residuals-btn-purge" id="residuals-btn-purge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        <span>Очистить остатки</span>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- 2. SETTINGS & SYSTEM RATING DIALOG (Параметры и оценка системы) -->
+  <dialog class="glass-dialog settings-dialog" id="settings-dialog">
+    <div class="settings-modal-header">
+      <div class="settings-modal-title-wrap">
+        <div class="settings-header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="settings-modal-title">Параметры и оценка системы</h3>
+          <p class="settings-modal-sub">TheCore Control & Performance Hub</p>
+        </div>
+      </div>
+      <button class="modal-close-icon-btn" id="settings-close-btn" title="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="settings-modal-body">
+      <!-- VIEW 1: Main Settings & WEI Score -->
+      <div class="settings-view-panel active" id="settings-view-main">
+        <!-- Section 1: WEI System Performance Index -->
+        <section class="settings-section">
+          <div class="settings-section-head">
+            <div class="settings-section-title-wrap">
+              <span class="settings-section-badge">WEI</span>
+              <h4 class="settings-section-title">Индекс производительности Windows</h4>
+            </div>
+          </div>
+
+          <!-- Hero Card with Base Score -->
+          <div class="wei-hero-card">
+            <div class="wei-score-visual">
+              <div class="wei-big-score" id="wei-base-score">—</div>
+              <div class="wei-score-meta">
+                <span class="wei-score-title">Базовый балл системы</span>
+                <span class="wei-score-caption">Определяется по наименьшей оценке компонента</span>
+              </div>
+            </div>
+
+            <div class="wei-os-zone" id="wei-os-zone">
+              <div class="wei-os-icon" id="wei-os-icon">
+                <svg width="28" height="28" viewBox="0 0 88 88" fill="none">
+                  <path d="M0 0H41.5V41.5H0V0Z" fill="#0078D4"/>
+                  <path d="M46.5 0H88V41.5H46.5V0Z" fill="#0078D4"/>
+                  <path d="M0 46.5H41.5V88H0V46.5Z" fill="#0078D4"/>
+                  <path d="M46.5 46.5H88V88H46.5V46.5Z" fill="#0078D4"/>
+                </svg>
+              </div>
+              <div class="wei-os-meta">
+                <span class="wei-os-name" id="wei-os-name">Windows 11 Pro</span>
+                <span class="wei-os-version" id="wei-os-version">23H2 • 64-bit</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Components List -->
+          <div class="wei-components-list" id="wei-components-list">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </section>
+
+        <!-- Section 2: App Preferences -->
+        <section class="settings-section">
+          <div class="settings-section-head">
+            <h4 class="settings-section-title">Параметры TheCore</h4>
+          </div>
+
+          <div class="settings-rows-wrap">
+            <div class="settings-item-row">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Автозагрузка вместе с Windows</span>
+                <span class="settings-item-desc">Бесшумный запуск в системный трей без всплывающего окна (--hidden)</span>
+              </div>
+              <label class="toggle-switch" title="Автозагрузка TheCore">
+                <input type="checkbox" id="settings-toggle-autostart" class="thecore-toggle-input">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item-row">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Сворачивать в системный трей при закрытии</span>
+                <span class="settings-item-desc">При нажатии на крестик окно скрывается, продолжая безопасный фоновый мониторинг</span>
+              </div>
+              <label class="toggle-switch" title="Поведение при закрытии">
+                <input type="checkbox" id="settings-toggle-tray" class="thecore-toggle-input" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item-row">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Частота опроса телеметрии</span>
+                <span class="settings-item-desc">Интервал снятия показаний датчиков процессора, видеокарты и памяти</span>
+              </div>
+              <div class="settings-rate-selector" id="settings-rate-selector">
+                <button class="settings-rate-btn active" data-rate="1500">1.5 сек (Баланс)</button>
+                <button class="settings-rate-btn" data-rate="3000">3.0 сек (Эко)</button>
+              </div>
+            </div>
+
+            <div class="settings-item-row">
+              <div class="settings-item-info">
+                <div class="settings-item-label-wrap">
+                  <span class="settings-item-label">Игровой оверлей (In-Game HUD)</span>
+                  <span class="settings-hotkey-chip">Ctrl + Shift + O</span>
+                </div>
+                <span class="settings-item-desc">Стеклянный виджет FPS, температур и нагрузки поверх игр без риска бана и инпут-лага</span>
+              </div>
+              <label class="toggle-switch" title="Включить игровой оверлей">
+                <input type="checkbox" id="settings-toggle-overlay" class="thecore-toggle-input">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item-row" id="settings-overlay-position-row">
+              <div class="settings-item-info">
+                <span class="settings-item-label">Расположение оверлея на экране</span>
+                <span class="settings-item-desc">Угол отображения игрового виджета во время игры</span>
+              </div>
+              <div class="settings-overlay-pos-selector" id="settings-overlay-pos-selector">
+                <button class="settings-pos-btn active" data-pos="top-right">Верх-Право</button>
+                <button class="settings-pos-btn" data-pos="top-left">Верх-Лево</button>
+                <button class="settings-pos-btn" data-pos="bottom-right">Низ-Право</button>
+                <button class="settings-pos-btn" data-pos="bottom-left">Низ-Лево</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: About & EULA Link -->
+        <section class="settings-section">
+          <div class="settings-section-head">
+            <h4 class="settings-section-title">О программе и разработчике</h4>
+          </div>
+
+          <div class="settings-about-card">
+            <div class="settings-about-left">
+              <img src="../assets/logo.png" alt="TheCore Logo" class="settings-about-logo">
+              <div class="settings-about-text">
+                <div class="settings-about-title-row">
+                  <span class="settings-about-name">TheCore</span>
+                  <span class="settings-about-ver">v3.3.0</span>
+                </div>
+                <span class="settings-about-author">Автор и разработчик: <strong>Theurer</strong></span>
+                <span class="settings-about-privacy">🛡️ Offline-First • Zero-Telemetry • 100% приватность</span>
+              </div>
+            </div>
+
+            <button class="settings-eula-btn" id="btn-open-eula" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Лицензионное соглашение</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 2: Embedded EULA View -->
+      <div class="settings-view-panel" id="settings-view-eula" style="display: none;">
+        <div class="settings-eula-nav">
+          <div class="settings-eula-title-wrap">
+            <span class="settings-section-badge">EULA</span>
+            <h4 class="settings-section-title">Лицензионное соглашение TheCore</h4>
+          </div>
+          <span class="settings-eula-stamp">Offline-First • Zero-Telemetry</span>
+        </div>
+
+        <div class="eula-content-text">
+          <p class="eula-intro">Внимательно ознакомьтесь с условиями настоящего Соглашения перед использованием программного обеспечения «TheCore». Установка, копирование или запуск программы означает полное и безоговорочное согласие со всеми приведенными условиями.</p>
+
+          <h4>1. Общие положения и термины</h4>
+          <p>1.1. Настоящее Пользовательское лицензионное соглашение является юридически обязывающим договором между Вами (Пользователем) и разработчиком TheCore — Theurer (Правообладателем).<br>
+          1.2. Программное обеспечение «TheCore» включает исполняемые файлы, системные модули ядра, графический интерфейс, базы данных экспертного анализа и сопутствующую документацию.</p>
+
+          <h4>2. Предоставление лицензии</h4>
+          <p>2.1. Правообладатель предоставляет Пользователю неисключительную, непередаваемую лицензию на использование Программы на персональных компьютерах под управлением операционной системы Microsoft Windows.<br>
+          2.2. Все права на интеллектуальную собственность и алгоритмы сохраняются за Правообладателем (Theurer).</p>
+
+          <h4>3. Приватность и защита данных (Zero-Telemetry)</h4>
+          <p>3.1. Архитектура Программы базируется на строгом принципе полной автономности (Offline-First).<br>
+          3.2. Программа <strong>НЕ осуществляет</strong> сбор, хранение или передачу персональных данных, сетевого трафика, истории веб-посещений или файлов пользователя на внешние серверы.<br>
+          3.3. Мониторинг аппаратных компонентов (CPU, GPU, RAM, датчики и диски) производится исключительно локально в памяти компьютера без выхода в сеть.</p>
+
+          <h4>4. Системные операции и безопасность</h4>
+          <p>4.1. Модуль оптимизации производит документированные Win32 API вызовы: сброс рабочего набора RAM (EmptyWorkingSet), безопасную очистку каталога %TEMP% и кэшей графических шейдеров.<br>
+          4.2. Модуль деинсталляции производит проверку защищённости системных каталогов перед удалением (Zero Damage Guard), предотвращая повреждение критических файлов Windows.<br>
+          4.3. Модуль «Советник по апгрейду» носит информационно-аналитический характер.</p>
+
+          <h4>5. Отказ от гарантий и ограничение ответственности</h4>
+          <p>5.1. Программное обеспечение предоставляется на условиях «КАК ЕСТЬ» («AS IS»).<br>
+          5.2. В максимальной степени, допускаемой законодательством, Правообладатель не несет ответственности за сбои оборудования или сторонних программ, вызванные нестабильным аппаратным разгоном (overclocking) или модификациями системы.</p>
+        </div>
+
+        <div class="settings-eula-footer">
+          <button class="settings-btn-eula-done" id="settings-btn-eula-done" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Готово</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 3. EULA MODAL DIALOG (Лицензионное соглашение при первом запуске) -->
+  <dialog class="glass-dialog eula-dialog" id="eula-dialog">
+    <div class="eula-modal-header">
+      <div class="eula-modal-title-wrap">
+        <div class="eula-header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="eula-modal-title">Пользовательское лицензионное соглашение (EULA)</h3>
+          <p class="eula-modal-sub">TheCore v3.3.0 • Правообладатель и разработчик: Theurer</p>
+        </div>
+      </div>
+      <button class="modal-close-icon-btn" id="eula-close-btn" title="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="eula-modal-body">
+      <div class="eula-content-text">
+        <p class="eula-intro">Внимательно ознакомьтесь с условиями настоящего Соглашения перед использованием программного обеспечения «TheCore». Установка, копирование или запуск программы означает полное и безоговорочное согласие со всеми приведенными условиями.</p>
+
+        <h4>1. Общие положения и термины</h4>
+        <p>1.1. Настоящее Пользовательское лицензионное соглашение является юридически обязывающим договором между Вами (Пользователем) и разработчиком TheCore — Theurer (Правообладателем).<br>
+        1.2. Программное обеспечение «TheCore» включает исполняемые файлы, системные модули ядра, графический интерфейс, базы данных экспертного анализа и сопутствующую документацию.</p>
+
+        <h4>2. Предоставление лицензии</h4>
+        <p>2.1. Правообладатель предоставляет Пользователю неисключительную, непередаваемую лицензию на использование Программы на персональных компьютерах под управлением операционной системы Microsoft Windows.<br>
+        2.2. Все права на интеллектуальную собственность и алгоритмы сохраняются за Правообладателем (Theurer).</p>
+
+        <h4>3. Приватность и защита данных (Zero-Telemetry)</h4>
+        <p>3.1. Архитектура Программы базируется на строгом принципе полной автономности (Offline-First).<br>
+        3.2. Программа <strong>НЕ осуществляет</strong> сбор, хранение или передачу персональных данных, сетевого трафика, истории веб-посещений или файлов пользователя на внешние серверы.<br>
+        3.3. Мониторинг аппаратных компонентов (CPU, GPU, RAM, датчики и диски) производится исключительно локально в памяти компьютера без выхода в сеть.</p>
+
+        <h4>4. Системные операции и безопасность</h4>
+        <p>4.1. Модуль оптимизации производит документированные Win32 API вызовы: сброс рабочего набора RAM (EmptyWorkingSet), безопасную очистку каталога %TEMP% и кэшей графических шейдеров.<br>
+        4.2. Модуль деинсталляции производит проверку защищённости системных каталогов перед удалением (Zero Damage Guard), предотвращая повреждение критических файлов Windows.<br>
+        4.3. Модуль «Советник по апгрейду» носит информационно-аналитический характер.</p>
+
+        <h4>5. Отказ от гарантий и ограничение ответственности</h4>
+        <p>5.1. Программное обеспечение предоставляется на условиях «КАК ЕСТЬ» («AS IS»).<br>
+        5.2. В максимальной степени, допускаемой законодательством, Правообладатель не несет ответственности за сбои оборудования или сторонних программ, вызванные нестабильным аппаратным разгоном (overclocking) или модификациями системы.</p>
+      </div>
+    </div>
+
+    <div class="eula-modal-footer">
+      <button class="eula-btn-confirm" id="eula-btn-confirm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Понятно</span>
+      </button>
+    </div>
+  </dialog>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
