@@ -22,6 +22,7 @@ const BACKUP_DIR = path.join(ROOT_DIR, '.build_backup');
 const TARGET_FILES = [
   { file: 'main.js', target: 'node' },
   { file: 'preload.js', target: 'node' },
+  { file: 'i18n.js', target: 'browser' },
   { file: 'renderer.js', target: 'browser' }
 ];
 
